@@ -1,6 +1,5 @@
 package com.smarttoolfactory.ratingbar
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -51,7 +50,6 @@ fun RatingBar(
 
     Box(
         modifier
-            .border(2.dp, Color.Green)
             .pointerInput(Unit) {
                 val ratingBarWidth = size.width.toFloat()
                 detectDragGestures { change, _ ->
