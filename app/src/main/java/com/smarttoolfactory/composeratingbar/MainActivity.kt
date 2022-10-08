@@ -3,14 +3,21 @@ package com.smarttoolfactory.composeratingbar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.composeratingbar.ui.theme.ComposeRatingBarTheme
+import com.smarttoolfactory.ratingbar.RatingBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,22 +29,44 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+
+                    var rating by remember { mutableStateOf(3.7f) }
+
+                    val image = ImageBitmap.imageResource(id = R.drawable.star)
+                    val imageFull = ImageBitmap.imageResource(id = R.drawable.star_full)
+
+                    Column {
+                        RatingBar(
+                            rating = rating,
+                            spaceBetween = 10.dp,
+                            imageBorder = image,
+                            imageFull = imageFull
+                        ) {
+                            rating = it
+                        }
+
+                        Text("Rating: $rating")
+                        RatingBar(
+                            rating = 2.5f,
+                            spaceBetween = 2.dp,
+                            imageBorder = image,
+                            imageFull = imageFull
+                        )
+                        RatingBar(
+                            rating = 4.5f,
+                            spaceBetween = 2.dp,
+                            imageBorder = image,
+                            imageFull = imageFull
+                        )
+                        RatingBar(
+                            rating = 1.3f,
+                            spaceBetween = 4.dp,
+                            imageBorder = image,
+                            imageFull = imageFull
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    ComposeRatingBarTheme {
-        Greeting("Android")
     }
 }
