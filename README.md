@@ -1,8 +1,36 @@
 # Compose-RatingBar
+
+[![](https://jitpack.io/v/SmartToolFactory/Compose-RatingBar.svg)](https://jitpack.io/#SmartToolFactory/Compose-RatingBar)
+
+
 Rating bar to set fixed value or change rating by gestures with custom png files, ImageVectors with
 customization and shimmer effects.
 
 https://user-images.githubusercontent.com/35650605/194745347-e91d2427-5d51-414c-9604-d0bd9b39f5f0.mp4
+
+## Gradle Setup
+
+To get a Git project into your build:
+
+* Step 1. Add the JitPack repository to your build file Add it in your root build.gradle at the end
+  of repositories:
+
+```
+allprojects {
+  repositories {
+      ...
+      maven { url 'https://jitpack.io' }
+  }
+}
+```
+
+* Step 2. Add the dependency
+
+```
+dependencies {
+	  implementation 'com.github.SmartToolFactory:Compose-RatingBar:Tag'
+}
+```
 
 ## Declrations
 
