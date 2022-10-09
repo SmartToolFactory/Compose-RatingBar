@@ -1,17 +1,12 @@
 package com.smarttoolfactory.ratingbar
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -40,6 +35,7 @@ fun RatingBar(
     rating: Float,
     imageBackground: ImageBitmap,
     imageForeground: ImageBitmap,
+    tint: Color? = Color(0xffFFB300),
     itemSize: Dp = Dp.Unspecified,
     animationEnabled: Boolean = true,
     gestureEnabled: Boolean = true,
@@ -47,110 +43,38 @@ fun RatingBar(
     space: Dp = 0.dp,
     onRatingChange: ((Float) -> Unit)? = null
 ) {
-    Box(modifier) {
+    val intrinsicWidth = imageBackground.width.toFloat()
+    val intrinsicHeight = imageBackground.height.toFloat()
 
-        val height: Dp = if (itemSize != Dp.Unspecified) {
-            itemSize
-        } else {
-            LocalDensity.current.run { imageBackground.height.toDp() }
-        }
-
-        val spacePx: Float = LocalDensity.current.run { space.toPx() }
-
-        val itemWidthPx: Float = if (itemSize != Dp.Unspecified) {
-            LocalDensity.current.run { itemSize.toPx() }
-        } else {
-            imageBackground.width.toFloat()
-        }
-
-        val totalWidth: Dp = LocalDensity.current.run {
-            itemWidthPx.toDp() * itemCount + space * (itemCount - 1)
-        }
-
-        val itemIntervals = remember {
-            ratingItemPositions(itemWidthPx, spacePx, itemCount)
-        }
-
-        val coerced = rating.coerceIn(0f, itemCount.toFloat())
-
-        val coroutineScope = rememberCoroutineScope()
-        val animatableRating = remember { Animatable(if (animationEnabled) 0f else coerced) }
-
-        LaunchedEffect(key1 = if (gestureEnabled) Unit else coerced) {
-            if (animationEnabled) {
-                animatableRating.animateTo(
-                    targetValue = coerced,
-                    animationSpec = tween(300, easing = LinearEasing)
-
-                )
-            } else {
-                animatableRating.snapTo(coerced)
-            }
-        }
-
-        val gestureModifier = Modifier
-            .pointerInput(Unit) {
-                val ratingBarWidth = size.width.toFloat()
-                detectDragGestures { change, _ ->
-
-                    val x = change.position.x
-                    val newRating = getRatingFromTouchPosition(
-                        x = x,
-                        itemIntervals = itemIntervals,
-                        ratingBarDimension = ratingBarWidth,
-                        space = spacePx,
-                        totalCount = itemCount,
-                    )
-
-                    coroutineScope.launch {
-                        animatableRating.snapTo(newRating)
-                        onRatingChange?.invoke(animatableRating.value)
-                    }
-
-                }
-            }
-            .pointerInput(Unit) {
-                val ratingBarWidth = size.width.toFloat()
-
-                detectTapGestures { change ->
-                    val x = change.x
-                    val newRating = getRatingFromTouchPosition(
-                        x = x,
-                        itemIntervals = itemIntervals,
-                        ratingBarDimension = ratingBarWidth,
-                        space = spacePx,
-                        totalCount = itemCount,
-                    )
-
-                    coroutineScope.launch {
-                        if (animationEnabled) {
-                            animatableRating.animateTo(
-                                targetValue = newRating,
-                                animationSpec = tween(300, easing = LinearEasing)
-                            )
-                        } else {
-                            animatableRating.snapTo(newRating)
-                        }
-                        onRatingChange?.invoke(animatableRating.value)
-                    }
-                }
-            }
-
-        Box(modifier = Modifier
-            .then(if (gestureEnabled) gestureModifier else Modifier)
-            .width(totalWidth)
-            .height(height)
-            .drawBehind {
-                drawRatingImages(
-                    animatableRating.value,
-                    itemCount,
-                    imageBackground,
-                    imageForeground,
-                    spacePx
-                )
-            }
-        )
+    val colorFilter: ColorFilter? = remember(tint) {
+        if (tint != null) {
+            ColorFilter.tint(tint)
+        } else null
     }
+
+    RatingBarImpl(
+        modifier = modifier,
+        rating = rating,
+        intrinsicWidth = intrinsicWidth,
+        intrinsicHeight = intrinsicHeight,
+        itemSize = itemSize,
+        animationEnabled = animationEnabled,
+        gestureEnabled = gestureEnabled,
+        itemCount = itemCount,
+        space = space,
+        block = { updatedRating: Float, spaceBetween: Float, progress: Float ->
+            drawRatingImages(
+                rating = updatedRating,
+                itemCount = itemCount,
+                imageBackground = imageBackground,
+                imageForeground = imageForeground,
+                colorFilter = colorFilter,
+                space = spaceBetween,
+                progress = progress
+            )
+        },
+        onRatingChange = onRatingChange
+    )
 }
 
 @Composable
@@ -169,7 +93,7 @@ fun RatingBar(
 ) {
 
     val painterWidth = painterBackground.intrinsicSize.width
-    val vectorHeight = painterBackground.intrinsicSize.height
+    val painterHeight = painterBackground.intrinsicSize.height
 
     val colorFilter: ColorFilter? = remember(tint) {
         if (tint != null) {
@@ -177,111 +101,28 @@ fun RatingBar(
         } else null
     }
 
-    Box(modifier) {
-
-        val height: Dp = if (itemSize != Dp.Unspecified) {
-            itemSize
-        } else {
-            LocalDensity.current.run { vectorHeight.toDp() }
-        }
-
-        val spacePx: Float = LocalDensity.current.run { space.toPx() }
-
-        val itemWidthPx: Float = if (itemSize != Dp.Unspecified) {
-            LocalDensity.current.run { itemSize.toPx() }
-        } else {
-            painterWidth
-        }
-
-        val totalWidth: Dp = LocalDensity.current.run {
-            itemWidthPx.toDp() * itemCount + space * (itemCount - 1)
-        }
-
-        val itemIntervals = remember {
-            ratingItemPositions(itemWidthPx, spacePx, itemCount)
-        }
-
-        val coerced = rating.coerceIn(0f, itemCount.toFloat())
-
-        val coroutineScope = rememberCoroutineScope()
-        val animatableRating = remember { Animatable(if (animationEnabled) 0f else coerced) }
-
-        LaunchedEffect(key1 = if (gestureEnabled) Unit else coerced) {
-            if (animationEnabled) {
-                animatableRating.animateTo(
-                    targetValue = coerced,
-                    animationSpec = tween(300, easing = LinearEasing)
-
-                )
-            } else {
-                animatableRating.snapTo(coerced)
-            }
-        }
-
-        val gestureModifier = Modifier
-            .pointerInput(Unit) {
-                val ratingBarWidth = size.width.toFloat()
-                detectDragGestures { change, _ ->
-
-                    val x = change.position.x
-                    val newRating = getRatingFromTouchPosition(
-                        x = x,
-                        itemIntervals = itemIntervals,
-                        ratingBarDimension = ratingBarWidth,
-                        space = spacePx,
-                        totalCount = itemCount,
-                    )
-
-                    coroutineScope.launch {
-                        animatableRating.snapTo(newRating)
-                        onRatingChange?.invoke(animatableRating.value)
-                    }
-
-                }
-            }
-            .pointerInput(Unit) {
-                val ratingBarWidth = size.width.toFloat()
-
-                detectTapGestures { change ->
-                    val x = change.x
-                    val newRating = getRatingFromTouchPosition(
-                        x = x,
-                        itemIntervals = itemIntervals,
-                        ratingBarDimension = ratingBarWidth,
-                        space = spacePx,
-                        totalCount = itemCount,
-                    )
-
-                    coroutineScope.launch {
-                        if (animationEnabled) {
-                            animatableRating.animateTo(
-                                targetValue = newRating,
-                                animationSpec = tween(300, easing = LinearEasing)
-                            )
-                        } else {
-                            animatableRating.snapTo(newRating)
-                        }
-                        onRatingChange?.invoke(animatableRating.value)
-                    }
-                }
-            }
-
-        Box(modifier = Modifier
-            .then(if (gestureEnabled) gestureModifier else Modifier)
-            .width(totalWidth)
-            .height(height)
-            .drawBehind {
-                drawRatingPainters(
-                    animatableRating.value,
-                    itemCount,
-                    painterBackground,
-                    painterForeground,
-                    colorFilter,
-                    spacePx
-                )
-            }
-        )
-    }
+    RatingBarImpl(
+        modifier = modifier,
+        rating = rating,
+        intrinsicWidth = painterWidth,
+        intrinsicHeight = painterHeight,
+        itemSize = itemSize,
+        animationEnabled = animationEnabled,
+        gestureEnabled = gestureEnabled,
+        itemCount = itemCount,
+        space = space,
+        block = { updatedRating: Float, spaceBetween: Float, progress: Float ->
+            drawRatingPainters(
+                updatedRating,
+                itemCount,
+                painterBackground,
+                painterForeground,
+                colorFilter,
+                spaceBetween
+            )
+        },
+        onRatingChange = onRatingChange
+    )
 }
 
 @Composable
@@ -303,18 +144,61 @@ fun RatingBar(
     val painterForeground = rememberVectorPainter(image = imageVectorForeground)
 
     val painterWidth = painterBackground.intrinsicSize.width
-    val vectorHeight = painterBackground.intrinsicSize.height
+    val painterHeight = painterBackground.intrinsicSize.height
 
     val colorFilter = remember(tint) {
         ColorFilter.tint(tint)
     }
+
+    RatingBarImpl(
+        modifier = modifier,
+        rating = rating,
+        intrinsicWidth = painterWidth,
+        intrinsicHeight = painterHeight,
+        itemSize = itemSize,
+        animationEnabled = animationEnabled,
+        gestureEnabled = gestureEnabled,
+        itemCount = itemCount,
+        space = space,
+        block = { updatedRating: Float, spaceBetween: Float, progress: Float ->
+            drawRatingPainters(
+                updatedRating,
+                itemCount,
+                painterBackground,
+                painterForeground,
+                colorFilter,
+                spaceBetween
+            )
+        },
+        onRatingChange = onRatingChange
+    )
+}
+
+@Composable
+private fun RatingBarImpl(
+    modifier: Modifier = Modifier,
+    rating: Float,
+    itemSize: Dp = Dp.Unspecified,
+    intrinsicWidth: Float,
+    intrinsicHeight: Float,
+    animationEnabled: Boolean = true,
+    gestureEnabled: Boolean = true,
+    itemCount: Int = 5,
+    space: Dp = 0.dp,
+    block: DrawScope.(
+        rating: Float,
+        space: Float,
+        progress: Float,
+    ) -> Unit,
+    onRatingChange: ((Float) -> Unit)? = null
+) {
 
     Box(modifier) {
 
         val height: Dp = if (itemSize != Dp.Unspecified) {
             itemSize
         } else {
-            LocalDensity.current.run { vectorHeight.toDp() }
+            LocalDensity.current.run { intrinsicHeight.toDp() }
         }
 
         val spacePx: Float = LocalDensity.current.run { space.toPx() }
@@ -322,7 +206,7 @@ fun RatingBar(
         val itemWidthPx: Float = if (itemSize != Dp.Unspecified) {
             LocalDensity.current.run { itemSize.toPx() }
         } else {
-            painterWidth
+            intrinsicWidth.toFloat()
         }
 
         val totalWidth: Dp = LocalDensity.current.run {
@@ -398,22 +282,48 @@ fun RatingBar(
                 }
             }
 
-        Box(modifier = Modifier
-            .then(if (gestureEnabled) gestureModifier else Modifier)
-            .width(totalWidth)
-            .height(height)
-            .drawBehind {
-                drawRatingPainters(
-                    animatableRating.value,
-                    itemCount,
-                    painterBackground,
-                    painterForeground,
-                    colorFilter,
-                    spacePx
-                )
-            }
+
+        val progress = getProgress(shimmerEffect = true)
+
+        Box(
+            modifier = Modifier
+                .then(if (gestureEnabled) gestureModifier else Modifier)
+                .width(totalWidth)
+                .height(height)
+                .drawBehind {
+                    block(
+                        animatableRating.value,
+                        spacePx,
+                        progress
+                    )
+                }
         )
     }
+}
+
+@Composable
+private fun getProgress(shimmerEffect: Boolean): Float {
+
+    val result: Float
+
+    if (shimmerEffect) {
+        val transition = rememberInfiniteTransition()
+        val progress by transition.animateFloat(
+
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                tween(durationMillis = 2000, easing = FastOutSlowInEasing),
+                RepeatMode.Reverse
+            )
+        )
+
+        result = progress
+    } else {
+        result = 1f
+    }
+
+    return result
 }
 
 private fun getRatingFromTouchPosition(
@@ -520,7 +430,9 @@ private fun DrawScope.drawRatingImages(
     itemCount: Int,
     imageBackground: ImageBitmap,
     imageForeground: ImageBitmap,
-    space: Float
+    colorFilter: ColorFilter?,
+    space: Float,
+    progress: Float,
 ) {
 
     val imageWidth = size.height
@@ -536,7 +448,8 @@ private fun DrawScope.drawRatingImages(
         drawImage(
             image = imageBackground,
             dstOffset = IntOffset(start, 0),
-            dstSize = IntSize(size.height.toInt(), size.height.toInt())
+            dstSize = IntSize(size.height.toInt(), size.height.toInt()),
+            colorFilter = colorFilter
         )
     }
 
@@ -548,7 +461,8 @@ private fun DrawScope.drawRatingImages(
             drawImage(
                 image = imageForeground,
                 dstOffset = IntOffset(start, 0),
-                dstSize = IntSize(size.height.toInt(), size.height.toInt())
+                dstSize = IntSize(size.height.toInt(), size.height.toInt()),
+                colorFilter = colorFilter
             )
         }
 
@@ -563,6 +477,24 @@ private fun DrawScope.drawRatingImages(
             size = Size(rectWidth, height = size.height),
             blendMode = BlendMode.SrcIn
         )
+
+        val ShimmerColorShades = listOf(
+            Color.Red.copy(0.9f),
+            Color.Red.copy(0.3f),
+            Color.Red.copy(0.9f)
+
+        )
+
+        drawRect(
+            brush = Brush.linearGradient(
+                ShimmerColorShades,
+                start = Offset(10f, 10f),
+                end = Offset(end * progress, end * progress)
+            ),
+            size = Size(end, size.height),
+            blendMode = BlendMode.SrcIn
+        )
+
     }
 }
 
@@ -573,3 +505,12 @@ private fun DrawScope.drawWithLayer(block: DrawScope.() -> Unit) {
         restoreToCount(checkPoint)
     }
 }
+
+@Stable
+data class Shimmer(
+    val color: Color,
+    val animationSpec: AnimationSpec<Float> = infiniteRepeatable(
+        tween(durationMillis = 2000, easing = FastOutSlowInEasing),
+        RepeatMode.Reverse
+    )
+)
