@@ -29,6 +29,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smarttoolfactory.composeratingbar.ui.theme.ComposeRatingBarTheme
+import com.smarttoolfactory.ratingbar.DefaultColor
 import com.smarttoolfactory.ratingbar.RatingBar
 import com.smarttoolfactory.ratingbar.model.Shimmer
 
@@ -43,7 +44,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     RatingbarDemo()
-
                 }
             }
         }
@@ -67,8 +67,8 @@ private fun RatingbarDemo() {
             RatingBar(
                 rating = rating,
                 space = 2.dp,
-                imageBackground = imageBackground,
-                imageForeground = imageForeground,
+                imageEmpty = imageBackground,
+                imageFilled = imageForeground,
                 animationEnabled = false,
                 gestureEnabled = true,
                 itemSize = 60.dp
@@ -86,11 +86,11 @@ private fun RatingbarDemo() {
 
             RatingBar(
                 rating = rating2,
-                painterBackground = painterResource(id = R.drawable.star_background),
-                painterForeground = painterResource(id = R.drawable.star_foreground),
+                painterEmpty = painterResource(id = R.drawable.star_background),
+                painterFilled = painterResource(id = R.drawable.star_foreground),
                 animationEnabled = false,
                 gestureEnabled = false,
-                tint = purple500,
+                tintEmpty = purple500,
                 shimmer = Shimmer(
                     colors = listOf(
                         purple500.copy(.9f),
@@ -117,9 +117,10 @@ private fun RatingbarDemo() {
 
             RatingBar(
                 rating = rating3,
-                painterBackground = painterResource(id = R.drawable.star_background),
-                painterForeground = painterResource(id = R.drawable.star_foreground),
-                tint = Color(0xff795548),
+                painterEmpty = painterResource(id = R.drawable.star_background),
+                painterFilled = painterResource(id = R.drawable.star_foreground),
+                tintEmpty = Color(0xff795548),
+                tintFilled = Color(0xff795548),
                 animationEnabled = true,
                 itemSize = 60.dp
             ) {
@@ -130,8 +131,8 @@ private fun RatingbarDemo() {
             RatingBar(
                 rating = rating4,
                 space = 2.dp,
-                imageVectorBackground = Icons.Default.FavoriteBorder,
-                imageVectorForeground = Icons.Default.Favorite,
+                imageVectorEmpty = Icons.Default.FavoriteBorder,
+                imageVectorFFilled = Icons.Default.Favorite,
                 shimmer = Shimmer(
                     color = pink500,
                     animationSpec = infiniteRepeatable(
@@ -139,7 +140,7 @@ private fun RatingbarDemo() {
                         repeatMode = RepeatMode.Reverse
                     )
                 ),
-                tint = pink500,
+                tintEmpty = pink500,
                 itemSize = 40.dp
             ) {
                 rating4 = it
@@ -148,9 +149,10 @@ private fun RatingbarDemo() {
             RatingBar(
                 rating = rating5,
                 space = 2.dp,
-                imageVectorBackground = ImageVector.vectorResource(id = R.drawable.outline_wb_cloudy_24),
-                imageVectorForeground = ImageVector.vectorResource(id = R.drawable.baseline_wb_cloudy_24),
-                tint = Color(0xff2196F3),
+                imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.outline_wb_cloudy_24),
+                imageVectorFFilled = ImageVector.vectorResource(id = R.drawable.baseline_wb_cloudy_24),
+                tintEmpty = Color(0xff2196F3),
+                tintFilled = Color(0xff4FC3F7),
                 itemSize = 60.dp
             ) {
                 rating5 = it
@@ -158,35 +160,47 @@ private fun RatingbarDemo() {
 
             RatingBar(
                 rating = rating6,
-                imageVectorBackground = ImageVector.vectorResource(id = R.drawable.twotone_person_24),
-                imageVectorForeground = ImageVector.vectorResource(id = R.drawable.baseline_person_24),
-                tint = Color(0xff795548),
+                imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.twotone_person_24),
+                imageVectorFFilled = ImageVector.vectorResource(id = R.drawable.baseline_person_24),
+                tintEmpty = Color(0xff795548),
+                tintFilled = Color(0xffA1887F),
                 itemSize = 40.dp
             ) {
                 rating6 = it
             }
 
             RatingBar(
+                rating = 3.2f,
+                itemCount = 5,
+                imageEmpty = imageBackground,
+                imageFilled = imageForeground,
+                tintFilled = DefaultColor
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            RatingBar(
                 rating = 4.5f,
                 space = 2.dp,
                 itemCount = 10,
-                imageBackground = imageBackground,
-                imageForeground = imageForeground,
+                imageEmpty = imageBackground,
+                imageFilled = imageForeground,
                 shimmer = Shimmer()
             )
-            Spacer(modifier=Modifier.height(10.dp))
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             RatingBar(
                 rating = 8.3f,
                 space = 4.dp,
                 itemCount = 10,
-                imageBackground = imageBackground,
-                imageForeground = imageForeground,
+                imageEmpty = imageBackground,
+                imageFilled = imageForeground,
                 shimmer = Shimmer(
                     animationSpec = infiniteRepeatable(
                         animation = tween(durationMillis = 3000, easing = LinearEasing),
                         repeatMode = RepeatMode.Restart
-                    )
+                    ),
+                    drawBorder = true
                 )
             )
         }

@@ -9,6 +9,7 @@ import com.smarttoolfactory.ratingbar.DefaultColor
 internal data class ShimmerData(
     val colors: List<Color>,
     val progress: Float,
+    val drawBorder: Boolean = false
 )
 
 /**
@@ -16,6 +17,8 @@ internal data class ShimmerData(
  * @param colors colors that are displayed on brush
  * @param animationSpec [InfiniteRepeatableSpec] to set animation and repeat modes either repeat
  * or reverse.
+ * @param drawBorder when set to true draws empty rating item above shimmer. This looks good
+ * with empty items with borders with small stroke widths
  */
 @Immutable
 data class Shimmer(
@@ -30,7 +33,8 @@ data class Shimmer(
             easing = FastOutSlowInEasing
         ),
         RepeatMode.Reverse
-    )
+    ),
+    val drawBorder: Boolean = false
 ) {
 
     companion object {
@@ -42,15 +46,17 @@ data class Shimmer(
                     easing = FastOutSlowInEasing
                 ),
                 RepeatMode.Reverse
-            )
+            ),
+            drawBorder: Boolean = false
         ): Shimmer {
             return Shimmer(
-                listOf(
+                colors = listOf(
                     color.copy(alpha = .9f),
                     color.copy(alpha = .3f),
                     color.copy(alpha = .9f)
                 ),
-                animationSpec
+                animationSpec = animationSpec,
+                drawBorder = drawBorder
             )
         }
     }

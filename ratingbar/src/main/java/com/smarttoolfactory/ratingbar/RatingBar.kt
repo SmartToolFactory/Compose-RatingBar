@@ -31,10 +31,10 @@ import kotlinx.coroutines.launch
  * to change current [rating]
  *
  * @param rating value to be set on this rating bar
- * @param imageBackground background for rating items. Item with borders to
+ * @param imageEmpty background for rating items. Item with borders to
  * show empty values
- * @param imageForeground foreground for rating items. Filled item to show percentage of rating
- * @param tint color for background and foreground items
+ * @param imageFilled foreground for rating items. Filled item to show percentage of rating
+ * @param tintEmpty color for background and foreground items
  * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
  * or vector file by default
  * @param animationEnabled when animation is enabled tap on any value is animated
@@ -50,9 +50,10 @@ import kotlinx.coroutines.launch
 fun RatingBar(
     modifier: Modifier = Modifier,
     rating: Float,
-    imageBackground: ImageBitmap,
-    imageForeground: ImageBitmap,
-    tint: Color? = null,
+    imageEmpty: ImageBitmap,
+    imageFilled: ImageBitmap,
+    tintEmpty: Color? = null,
+    tintFilled: Color? = null,
     itemSize: Dp = Dp.Unspecified,
     animationEnabled: Boolean = true,
     gestureEnabled: Boolean = true,
@@ -61,12 +62,18 @@ fun RatingBar(
     space: Dp = 0.dp,
     onRatingChange: ((Float) -> Unit)? = null
 ) {
-    val intrinsicWidth = imageBackground.width.toFloat()
-    val intrinsicHeight = imageBackground.height.toFloat()
+    val intrinsicWidth = imageEmpty.width.toFloat()
+    val intrinsicHeight = imageEmpty.height.toFloat()
 
-    val colorFilter: ColorFilter? = remember(tint) {
-        if (tint != null) {
-            ColorFilter.tint(tint)
+    val colorFilterEmpty: ColorFilter? = remember(tintEmpty) {
+        if (tintEmpty != null) {
+            ColorFilter.tint(tintEmpty)
+        } else null
+    }
+
+    val colorFilterFilled: ColorFilter? = remember(tintFilled) {
+        if (tintFilled != null) {
+            ColorFilter.tint(tintFilled)
         } else null
     }
 
@@ -85,9 +92,10 @@ fun RatingBar(
             drawRatingImages(
                 rating = updatedRating,
                 itemCount = itemCount,
-                imageBackground = imageBackground,
-                imageForeground = imageForeground,
-                colorFilter = colorFilter,
+                imageEmpty = imageEmpty,
+                imageFilled = imageFilled,
+                colorFilterEmpty = colorFilterEmpty,
+                colorFilterFilled = colorFilterFilled,
                 shimmerData = shimmerData,
                 space = spaceBetween,
             )
@@ -101,10 +109,10 @@ fun RatingBar(
  * to change current [rating]
  *
  * @param rating value to be set on this rating bar
- * @param painterBackground background for rating items. Item with borders to
+ * @param painterEmpty background for rating items. Item with borders to
  * show empty values
- * @param painterForeground foreground for rating items. Filled item to show percentage of rating
- * @param tint color for background and foreground items
+ * @param painterFilled foreground for rating items. Filled item to show percentage of rating
+ * @param tintEmpty color for background and foreground items
  * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
  * or vector file by default
  * @param animationEnabled when animation is enabled tap on any value is animated
@@ -120,9 +128,10 @@ fun RatingBar(
 fun RatingBar(
     modifier: Modifier = Modifier,
     rating: Float,
-    painterBackground: Painter,
-    painterForeground: Painter,
-    tint: Color? = null,
+    painterEmpty: Painter,
+    painterFilled: Painter,
+    tintEmpty: Color? = DefaultColor,
+    tintFilled: Color? = null,
     itemSize: Dp = Dp.Unspecified,
     animationEnabled: Boolean = true,
     gestureEnabled: Boolean = true,
@@ -132,12 +141,88 @@ fun RatingBar(
     onRatingChange: ((Float) -> Unit)? = null
 ) {
 
+    val painterWidth = painterEmpty.intrinsicSize.width
+    val painterHeight = painterEmpty.intrinsicSize.height
+
+    val colorFilterFilled: ColorFilter? = remember(tintFilled) {
+        if (tintFilled != null) {
+            ColorFilter.tint(tintFilled)
+        } else null
+    }
+
+    RatingBarImpl(
+        modifier = modifier,
+        rating = rating,
+        intrinsicWidth = painterWidth,
+        intrinsicHeight = painterHeight,
+        itemSize = itemSize,
+        animationEnabled = animationEnabled,
+        gestureEnabled = gestureEnabled,
+        shimmer = shimmer,
+        itemCount = itemCount,
+        space = space,
+        block = { updatedRating: Float, spaceBetween: Float, shimmerData: ShimmerData? ->
+            drawRatingPainters(
+                updatedRating,
+                itemCount,
+                painterEmpty,
+                painterFilled,
+                tintEmpty,
+                colorFilterFilled,
+                shimmerData,
+                spaceBetween
+            )
+        },
+        onRatingChange = onRatingChange
+    )
+}
+
+/**
+ * Rating bar that can be used for setting rating by passing a fixed value or using gestures
+ * to change current [rating]
+ *
+ * @param rating value to be set on this rating bar
+ * @param imageVectorEmpty background for rating items. Item with borders to
+ * show empty values
+ * @param imageVectorFFilled foreground for rating items. Filled item to show percentage of rating
+ * @param tintEmpty color for background and foreground items
+ * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
+ * or vector file by default
+ * @param animationEnabled when animation is enabled tap on any value is animated
+ * @param gestureEnabled when gesture is not enabled value can only be changed by setting [rating]
+ * @param shimmer shimmer effect for having a glow
+ * @param itemCount maximum number of items
+ * @param space space between rating items in dp
+ * @param onRatingChange callback to notify user when rating has changed. This is helpful
+ * for getting change after tap or drag gesture
+ *
+ */
+@Composable
+fun RatingBar(
+    modifier: Modifier = Modifier,
+    rating: Float,
+    imageVectorEmpty: ImageVector,
+    imageVectorFFilled: ImageVector,
+    tintEmpty: Color? = DefaultColor,
+    tintFilled: Color? = null,
+    itemSize: Dp = Dp.Unspecified,
+    animationEnabled: Boolean = true,
+    gestureEnabled: Boolean = true,
+    shimmer: Shimmer? = null,
+    itemCount: Int = 5,
+    space: Dp = 0.dp,
+    onRatingChange: ((Float) -> Unit)? = null
+) {
+
+    val painterBackground = rememberVectorPainter(image = imageVectorEmpty)
+    val painterForeground = rememberVectorPainter(image = imageVectorFFilled)
+
     val painterWidth = painterBackground.intrinsicSize.width
     val painterHeight = painterBackground.intrinsicSize.height
 
-    val colorFilter: ColorFilter? = remember(tint) {
-        if (tint != null) {
-            ColorFilter.tint(tint)
+    val colorFilterFilled: ColorFilter? = remember(tintFilled) {
+        if (tintFilled != null) {
+            ColorFilter.tint(tintFilled)
         } else null
     }
 
@@ -158,81 +243,8 @@ fun RatingBar(
                 itemCount,
                 painterBackground,
                 painterForeground,
-                colorFilter,
-                tint,
-                shimmerData,
-                spaceBetween
-            )
-        },
-        onRatingChange = onRatingChange
-    )
-}
-
-/**
- * Rating bar that can be used for setting rating by passing a fixed value or using gestures
- * to change current [rating]
- *
- * @param rating value to be set on this rating bar
- * @param imageVectorBackground background for rating items. Item with borders to
- * show empty values
- * @param imageVectorForeground foreground for rating items. Filled item to show percentage of rating
- * @param tint color for background and foreground items
- * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
- * or vector file by default
- * @param animationEnabled when animation is enabled tap on any value is animated
- * @param gestureEnabled when gesture is not enabled value can only be changed by setting [rating]
- * @param shimmer shimmer effect for having a glow
- * @param itemCount maximum number of items
- * @param space space between rating items in dp
- * @param onRatingChange callback to notify user when rating has changed. This is helpful
- * for getting change after tap or drag gesture
- *
- */
-@Composable
-fun RatingBar(
-    modifier: Modifier = Modifier,
-    rating: Float,
-    imageVectorBackground: ImageVector,
-    imageVectorForeground: ImageVector,
-    tint: Color = DefaultColor,
-    itemSize: Dp = Dp.Unspecified,
-    animationEnabled: Boolean = true,
-    gestureEnabled: Boolean = true,
-    shimmer: Shimmer? = null,
-    itemCount: Int = 5,
-    space: Dp = 0.dp,
-    onRatingChange: ((Float) -> Unit)? = null
-) {
-
-    val painterBackground = rememberVectorPainter(image = imageVectorBackground)
-    val painterForeground = rememberVectorPainter(image = imageVectorForeground)
-
-    val painterWidth = painterBackground.intrinsicSize.width
-    val painterHeight = painterBackground.intrinsicSize.height
-
-    val colorFilter = remember(tint) {
-        ColorFilter.tint(tint)
-    }
-
-    RatingBarImpl(
-        modifier = modifier,
-        rating = rating,
-        intrinsicWidth = painterWidth,
-        intrinsicHeight = painterHeight,
-        itemSize = itemSize,
-        animationEnabled = animationEnabled,
-        gestureEnabled = gestureEnabled,
-        shimmer = shimmer,
-        itemCount = itemCount,
-        space = space,
-        block = { updatedRating: Float, spaceBetween: Float, shimmerData: ShimmerData? ->
-            drawRatingPainters(
-                updatedRating,
-                itemCount,
-                painterBackground,
-                painterForeground,
-                colorFilter,
-                tint,
+                tintEmpty,
+                colorFilterFilled,
                 shimmerData,
                 spaceBetween
             )
@@ -364,7 +376,8 @@ private fun RatingBarImpl(
                             spacePx,
                             ShimmerData(
                                 colors = shimmer.colors,
-                                progress = progress
+                                progress = progress,
+                                drawBorder = shimmer.drawBorder
                             )
                         )
                     }
@@ -446,16 +459,23 @@ private fun ratingItemPositions(
 private fun DrawScope.drawRatingPainters(
     rating: Float,
     itemCount: Int,
-    painterBackground: Painter,
-    painterForeground: Painter,
-    colorFilter: ColorFilter?,
-    tint: Color?,
+    painterEmpty: Painter,
+    painterFilled: Painter,
+    tintEmpty: Color?,
+    colorFilterFilled: ColorFilter?,
     shimmerData: ShimmerData?,
     space: Float
 ) {
 
     val imageWidth = size.height
     val ratingInt = rating.toInt()
+
+    // End of rating bar
+    val startOfEmptyItems = imageWidth * itemCount + space * (itemCount - 1)
+    // Start of empty rating items
+    val endOfFilledItems = rating * imageWidth + ratingInt * space
+    // Rectangle width that covers empty items
+    val rectWidth = startOfEmptyItems - endOfFilledItems
 
     drawWithLayer {
 
@@ -465,21 +485,14 @@ private fun DrawScope.drawRatingPainters(
 
             // Destination
             translate(left = start, top = 0f) {
-                with(painterForeground) {
+                with(painterFilled) {
                     draw(
                         size = Size(size.height, size.height),
-                        colorFilter = colorFilter
+                        colorFilter = colorFilterFilled
                     )
                 }
             }
         }
-
-        // End of rating bar
-        val startOfEmptyItems = imageWidth * itemCount + space * (itemCount - 1)
-        // Start of empty rating items
-        val endOfFilledItems = rating * imageWidth + ratingInt * space
-        // Rectangle width that covers empty items
-        val rectWidth = startOfEmptyItems - endOfFilledItems
 
         // Source
         drawRect(
@@ -492,11 +505,11 @@ private fun DrawScope.drawRatingPainters(
         for (i in 0 until itemCount) {
 
             translate(left = (imageWidth * i + space * i), top = 0f) {
-                with(painterBackground) {
+                with(painterEmpty) {
                     draw(
                         size = Size(size.height, size.height),
                         colorFilter = ColorFilter.tint(
-                            tint ?: Color.Transparent,
+                            tintEmpty ?: Color.Transparent,
                             blendMode = BlendMode.SrcIn
                         )
                     )
@@ -519,6 +532,23 @@ private fun DrawScope.drawRatingPainters(
                 size = Size(endOfFilledItems, size.height),
                 blendMode = BlendMode.SrcIn
             )
+
+            if(shimmerData.drawBorder){
+                for (i in 0 until itemCount) {
+
+                    translate(left = (imageWidth * i + space * i), top = 0f) {
+                        with(painterEmpty) {
+                            draw(
+                                size = Size(size.height, size.height),
+                                colorFilter = ColorFilter.tint(
+                                    tintEmpty ?: Color.Transparent,
+                                    blendMode = BlendMode.SrcIn
+                                )
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -526,9 +556,10 @@ private fun DrawScope.drawRatingPainters(
 private fun DrawScope.drawRatingImages(
     rating: Float,
     itemCount: Int,
-    imageBackground: ImageBitmap,
-    imageForeground: ImageBitmap,
-    colorFilter: ColorFilter?,
+    imageEmpty: ImageBitmap,
+    imageFilled: ImageBitmap,
+    colorFilterEmpty: ColorFilter?,
+    colorFilterFilled: ColorFilter?,
     shimmerData: ShimmerData?,
     space: Float,
 ) {
@@ -545,9 +576,9 @@ private fun DrawScope.drawRatingImages(
             // Destination
             translate(left = start, top = 0f) {
                 drawImage(
-                    image = imageForeground,
+                    image = imageFilled,
                     dstSize = IntSize(size.height.toInt(), size.height.toInt()),
-                    colorFilter = colorFilter
+                    colorFilter = colorFilterFilled
                 )
             }
         }
@@ -571,9 +602,9 @@ private fun DrawScope.drawRatingImages(
 
             translate(left = (imageWidth * i + space * i), top = 0f) {
                 drawImage(
-                    image = imageBackground,
+                    image = imageEmpty,
                     dstSize = IntSize(size.height.toInt(), size.height.toInt()),
-                    colorFilter = colorFilter
+                    colorFilter = colorFilterEmpty
                 )
             }
         }
@@ -593,6 +624,19 @@ private fun DrawScope.drawRatingImages(
                 size = Size(endOfFilledItems, size.height),
                 blendMode = BlendMode.SrcIn
             )
+
+            if(shimmerData.drawBorder){
+                for (i in 0 until itemCount) {
+
+                    translate(left = (imageWidth * i + space * i), top = 0f) {
+                        drawImage(
+                            image = imageEmpty,
+                            dstSize = IntSize(size.height.toInt(), size.height.toInt()),
+                            colorFilter = colorFilterEmpty
+                        )
+                    }
+                }
+            }
         }
     }
 }
