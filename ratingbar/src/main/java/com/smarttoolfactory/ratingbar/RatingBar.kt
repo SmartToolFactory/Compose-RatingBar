@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.smarttoolfactory.ratingbar.model.Shimmer
+import com.smarttoolfactory.ratingbar.model.ShimmerData
 import kotlinx.coroutines.launch
 
 /**
@@ -35,10 +37,11 @@ fun RatingBar(
     rating: Float,
     imageBackground: ImageBitmap,
     imageForeground: ImageBitmap,
-    tint: Color? = Color(0xffFFB300),
+    tint: Color? = null,
     itemSize: Dp = Dp.Unspecified,
     animationEnabled: Boolean = true,
     gestureEnabled: Boolean = true,
+    shimmer: Shimmer? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
     onRatingChange: ((Float) -> Unit)? = null
@@ -60,17 +63,18 @@ fun RatingBar(
         itemSize = itemSize,
         animationEnabled = animationEnabled,
         gestureEnabled = gestureEnabled,
+        shimmer = shimmer,
         itemCount = itemCount,
         space = space,
-        block = { updatedRating: Float, spaceBetween: Float, progress: Float ->
+        block = { updatedRating: Float, spaceBetween: Float, shimmerData: ShimmerData? ->
             drawRatingImages(
                 rating = updatedRating,
                 itemCount = itemCount,
                 imageBackground = imageBackground,
                 imageForeground = imageForeground,
                 colorFilter = colorFilter,
+                shimmerData = shimmerData,
                 space = spaceBetween,
-                progress = progress
             )
         },
         onRatingChange = onRatingChange
@@ -87,6 +91,7 @@ fun RatingBar(
     itemSize: Dp = Dp.Unspecified,
     animationEnabled: Boolean = true,
     gestureEnabled: Boolean = true,
+    shimmer: Shimmer? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
     onRatingChange: ((Float) -> Unit)? = null
@@ -109,15 +114,17 @@ fun RatingBar(
         itemSize = itemSize,
         animationEnabled = animationEnabled,
         gestureEnabled = gestureEnabled,
+        shimmer = shimmer,
         itemCount = itemCount,
         space = space,
-        block = { updatedRating: Float, spaceBetween: Float, progress: Float ->
+        block = { updatedRating: Float, spaceBetween: Float, shimmerData: ShimmerData? ->
             drawRatingPainters(
                 updatedRating,
                 itemCount,
                 painterBackground,
                 painterForeground,
                 colorFilter,
+                shimmerData,
                 spaceBetween
             )
         },
@@ -131,10 +138,11 @@ fun RatingBar(
     rating: Float,
     imageVectorBackground: ImageVector,
     imageVectorForeground: ImageVector,
-    tint: Color = Color.Red,
+    tint: Color = DefaultColor,
     itemSize: Dp = Dp.Unspecified,
     animationEnabled: Boolean = true,
     gestureEnabled: Boolean = true,
+    shimmer: Shimmer? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
     onRatingChange: ((Float) -> Unit)? = null
@@ -158,15 +166,17 @@ fun RatingBar(
         itemSize = itemSize,
         animationEnabled = animationEnabled,
         gestureEnabled = gestureEnabled,
+        shimmer = shimmer,
         itemCount = itemCount,
         space = space,
-        block = { updatedRating: Float, spaceBetween: Float, progress: Float ->
+        block = { updatedRating: Float, spaceBetween: Float, shimmerData: ShimmerData? ->
             drawRatingPainters(
                 updatedRating,
                 itemCount,
                 painterBackground,
                 painterForeground,
                 colorFilter,
+                shimmerData,
                 spaceBetween
             )
         },
@@ -183,12 +193,13 @@ private fun RatingBarImpl(
     intrinsicHeight: Float,
     animationEnabled: Boolean = true,
     gestureEnabled: Boolean = true,
+    shimmer: Shimmer?,
     itemCount: Int = 5,
     space: Dp = 0.dp,
     block: DrawScope.(
         rating: Float,
         space: Float,
-        progress: Float,
+        shimmerData: ShimmerData?,
     ) -> Unit,
     onRatingChange: ((Float) -> Unit)? = null
 ) {
@@ -206,7 +217,7 @@ private fun RatingBarImpl(
         val itemWidthPx: Float = if (itemSize != Dp.Unspecified) {
             LocalDensity.current.run { itemSize.toPx() }
         } else {
-            intrinsicWidth.toFloat()
+            intrinsicWidth
         }
 
         val totalWidth: Dp = LocalDensity.current.run {
@@ -283,47 +294,54 @@ private fun RatingBarImpl(
             }
 
 
-        val progress = getProgress(shimmerEffect = true)
-
-        Box(
-            modifier = Modifier
-                .then(if (gestureEnabled) gestureModifier else Modifier)
-                .width(totalWidth)
-                .height(height)
-                .drawBehind {
-                    block(
-                        animatableRating.value,
-                        spacePx,
-                        progress
-                    )
-                }
-        )
+        if (shimmer != null) {
+            val progress = getProgress(shimmer.animationSpec)
+            Box(
+                modifier = Modifier
+                    .then(if (gestureEnabled) gestureModifier else Modifier)
+                    .width(totalWidth)
+                    .height(height)
+                    .drawBehind {
+                        block(
+                            animatableRating.value,
+                            spacePx,
+                            ShimmerData(
+                                colors = shimmer.colors,
+                                progress = progress
+                            )
+                        )
+                    }
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .then(if (gestureEnabled) gestureModifier else Modifier)
+                    .width(totalWidth)
+                    .height(height)
+                    .drawBehind {
+                        block(
+                            animatableRating.value,
+                            spacePx,
+                            null
+                        )
+                    }
+            )
+        }
     }
 }
 
 @Composable
-private fun getProgress(shimmerEffect: Boolean): Float {
+private fun getProgress(animationSpec: InfiniteRepeatableSpec<Float>): Float {
 
-    val result: Float
+    val transition = rememberInfiniteTransition()
+    val progress by transition.animateFloat(
 
-    if (shimmerEffect) {
-        val transition = rememberInfiniteTransition()
-        val progress by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = animationSpec
+    )
 
-            initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                tween(durationMillis = 2000, easing = FastOutSlowInEasing),
-                RepeatMode.Reverse
-            )
-        )
-
-        result = progress
-    } else {
-        result = 1f
-    }
-
-    return result
+    return progress
 }
 
 private fun getRatingFromTouchPosition(
@@ -374,6 +392,7 @@ private fun DrawScope.drawRatingPainters(
     painterBackground: Painter,
     painterForeground: Painter,
     colorFilter: ColorFilter?,
+    shimmerData: ShimmerData?,
     space: Float
 ) {
 
@@ -397,6 +416,7 @@ private fun DrawScope.drawRatingPainters(
     }
 
     drawWithLayer {
+
         for (i in 0 until itemCount) {
             val start = imageWidth * i + space * i
 
@@ -422,6 +442,20 @@ private fun DrawScope.drawRatingPainters(
             size = Size(rectWidth, height = size.height),
             blendMode = BlendMode.SrcIn
         )
+
+        shimmerData?.let { shimmerData ->
+            val progress = shimmerData.progress
+
+            drawRect(
+                brush = Brush.linearGradient(
+                    shimmerData.colors,
+                    start = Offset(10f, 10f),
+                    end = Offset(end * progress, end * progress)
+                ),
+                size = Size(end, size.height),
+                blendMode = BlendMode.SrcIn
+            )
+        }
     }
 }
 
@@ -431,15 +465,13 @@ private fun DrawScope.drawRatingImages(
     imageBackground: ImageBitmap,
     imageForeground: ImageBitmap,
     colorFilter: ColorFilter?,
+    shimmerData: ShimmerData?,
     space: Float,
-    progress: Float,
 ) {
 
     val imageWidth = size.height
-    val imageHeight = size.height
 
-    val reminder = rating - rating.toInt()
-    val ratingInt = (rating - reminder).toInt()
+    val ratingInt = rating.toInt()
 
     for (i in 0 until itemCount) {
 
@@ -454,6 +486,7 @@ private fun DrawScope.drawRatingImages(
     }
 
     drawWithLayer {
+
         for (i in 0 until itemCount) {
             val start = (imageWidth * i + space * i).toInt()
 
@@ -478,23 +511,19 @@ private fun DrawScope.drawRatingImages(
             blendMode = BlendMode.SrcIn
         )
 
-        val ShimmerColorShades = listOf(
-            Color.Red.copy(0.9f),
-            Color.Red.copy(0.3f),
-            Color.Red.copy(0.9f)
+        shimmerData?.let { shimmerData ->
+            val progress = shimmerData.progress
 
-        )
-
-        drawRect(
-            brush = Brush.linearGradient(
-                ShimmerColorShades,
-                start = Offset(10f, 10f),
-                end = Offset(end * progress, end * progress)
-            ),
-            size = Size(end, size.height),
-            blendMode = BlendMode.SrcIn
-        )
-
+            drawRect(
+                brush = Brush.linearGradient(
+                    shimmerData.colors,
+                    start = Offset(end * progress, end * progress),
+                    end = Offset(end * progress + 50f, end * progress + 50f)
+                ),
+                size = Size(end, size.height),
+                blendMode = BlendMode.SrcIn
+            )
+        }
     }
 }
 
@@ -506,11 +535,4 @@ private fun DrawScope.drawWithLayer(block: DrawScope.() -> Unit) {
     }
 }
 
-@Stable
-data class Shimmer(
-    val color: Color,
-    val animationSpec: AnimationSpec<Float> = infiniteRepeatable(
-        tween(durationMillis = 2000, easing = FastOutSlowInEasing),
-        RepeatMode.Reverse
-    )
-)
+val DefaultColor = Color(0xffFFB300)
