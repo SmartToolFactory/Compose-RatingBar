@@ -3,8 +3,14 @@ package com.smarttoolfactory.composeratingbar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -27,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smarttoolfactory.composeratingbar.ui.theme.ComposeRatingBarTheme
 import com.smarttoolfactory.ratingbar.RatingBar
+import com.smarttoolfactory.ratingbar.model.Shimmer
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +64,7 @@ class MainActivity : ComponentActivity() {
                             imageForeground = imageForeground,
                             animationEnabled = false,
                             gestureEnabled = true,
-                            itemSize = 60.dp
+                            itemSize = 30.dp
                         ) {
                             rating = it
                         }
@@ -68,19 +75,31 @@ class MainActivity : ComponentActivity() {
                             color = MaterialTheme.colorScheme.primary
                         )
 
+                        val purple500 = Color(0xff9C27B0)
+
                         RatingBar(
                             rating = rating2,
                             painterBackground = painterResource(id = R.drawable.star_background),
                             painterForeground = painterResource(id = R.drawable.star_foreground),
-                            tint = Color(0xff9C27B0),
                             animationEnabled = false,
                             gestureEnabled = false,
+                            shimmer = Shimmer(
+                                colors = listOf(
+                                    purple500.copy(.9f),
+                                    purple500.copy(.3f),
+                                    purple500.copy(.9f)
+                                )
+                            ),
                             itemSize = 60.dp
                         ) {
                             rating2 = it
                         }
 
-                        Slider(value = rating2, onValueChange = { rating2 = it }, valueRange = 0f..5f)
+                        Slider(
+                            value = rating2,
+                            onValueChange = { rating2 = it },
+                            valueRange = 0f..5f
+                        )
 
                         Text(
                             "Rating: $rating2",
@@ -99,18 +118,14 @@ class MainActivity : ComponentActivity() {
                             rating3 = it
                         }
 
-                        Text(
-                            "Rating: $rating",
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-
+                        val pink500 = Color(0xffE91E63)
                         RatingBar(
                             rating = rating4,
                             space = 2.dp,
                             imageVectorBackground = Icons.Default.FavoriteBorder,
                             imageVectorForeground = Icons.Default.Favorite,
-                            tint = Color(0xffE91E63),
+                            shimmer = Shimmer(color = pink500),
+                            tint = pink500,
                             itemSize = 60.dp
                         ) {
                             rating4 = it
@@ -140,14 +155,25 @@ class MainActivity : ComponentActivity() {
                         RatingBar(
                             rating = 4.5f,
                             space = 2.dp,
+                            itemCount = 10,
                             imageBackground = imageBackground,
-                            imageForeground = imageForeground
+                            imageForeground = imageForeground,
+                            shimmer = Shimmer()
                         )
+                        Spacer(modifier=Modifier.height(10.dp))
+
                         RatingBar(
-                            rating = 1.3f,
+                            rating = 8.3f,
                             space = 4.dp,
+                            itemCount = 10,
                             imageBackground = imageBackground,
-                            imageForeground = imageForeground
+                            imageForeground = imageForeground,
+                            shimmer = Shimmer(
+                                animationSpec = infiniteRepeatable(
+                                    animation = tween(durationMillis = 3000, easing = LinearEasing),
+                                    repeatMode = RepeatMode.Restart
+                                )
+                            )
                         )
                     }
                 }
