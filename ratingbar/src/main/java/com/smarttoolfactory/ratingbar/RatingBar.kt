@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.ratingbar.model.Shimmer
@@ -160,6 +159,7 @@ fun RatingBar(
                 painterBackground,
                 painterForeground,
                 colorFilter,
+                tint,
                 shimmerData,
                 spaceBetween
             )
@@ -232,6 +232,7 @@ fun RatingBar(
                 painterBackground,
                 painterForeground,
                 colorFilter,
+                tint,
                 shimmerData,
                 spaceBetween
             )
@@ -448,6 +449,7 @@ private fun DrawScope.drawRatingPainters(
     painterBackground: Painter,
     painterForeground: Painter,
     colorFilter: ColorFilter?,
+    tint: Color?,
     shimmerData: ShimmerData?,
     space: Float
 ) {
@@ -455,22 +457,9 @@ private fun DrawScope.drawRatingPainters(
     val imageWidth = size.height
     val ratingInt = rating.toInt()
 
-    for (i in 0 until itemCount) {
-
-        val start = (imageWidth * i + space * i)
-
-        translate(left = start, top = 0f) {
-            with(painterBackground) {
-                draw(
-                    size = Size(size.height, size.height),
-                    colorFilter = colorFilter
-                )
-            }
-        }
-    }
-
     drawWithLayer {
 
+        // Draw foreground rating items
         for (i in 0 until itemCount) {
             val start = imageWidth * i + space * i
 
@@ -485,29 +474,49 @@ private fun DrawScope.drawRatingPainters(
             }
         }
 
-        val end = imageWidth * itemCount + space * (itemCount - 1)
-        val start = rating * imageWidth + ratingInt * space
-        val rectWidth = end - start
+        // End of rating bar
+        val startOfEmptyItems = imageWidth * itemCount + space * (itemCount - 1)
+        // Start of empty rating items
+        val endOfFilledItems = rating * imageWidth + ratingInt * space
+        // Rectangle width that covers empty items
+        val rectWidth = startOfEmptyItems - endOfFilledItems
 
         // Source
         drawRect(
             Color.Transparent,
-            topLeft = Offset(start, 0f),
+            topLeft = Offset(endOfFilledItems, 0f),
             size = Size(rectWidth, height = size.height),
             blendMode = BlendMode.SrcIn
         )
 
-        shimmerData?.let { shimmerData ->
+        for (i in 0 until itemCount) {
 
-           val progress = shimmerData.progress
+            translate(left = (imageWidth * i + space * i), top = 0f) {
+                with(painterBackground) {
+                    draw(
+                        size = Size(size.height, size.height),
+                        colorFilter = ColorFilter.tint(
+                            tint ?: Color.Transparent,
+                            blendMode = BlendMode.SrcIn
+                        )
+                    )
+                }
+            }
+        }
+
+        shimmerData?.let { shimmerData ->
+            val progress = shimmerData.progress
 
             drawRect(
                 brush = Brush.linearGradient(
                     shimmerData.colors,
-                    start = Offset(10f, 10f),
-                    end = Offset(end * progress, end * progress)
+                    start = Offset(
+                        x = endOfFilledItems * progress - imageWidth,
+                        y = endOfFilledItems * progress - imageWidth
+                    ),
+                    end = Offset(endOfFilledItems * progress, endOfFilledItems * progress)
                 ),
-                size = Size(end, size.height),
+                size = Size(endOfFilledItems, size.height),
                 blendMode = BlendMode.SrcIn
             )
         }
@@ -527,43 +536,47 @@ private fun DrawScope.drawRatingImages(
     val imageWidth = size.height
     val ratingInt = rating.toInt()
 
-    for (i in 0 until itemCount) {
-
-        val start = (imageWidth * i + space * i).toInt()
-
-        drawImage(
-            image = imageBackground,
-            dstOffset = IntOffset(start, 0),
-            dstSize = IntSize(size.height.toInt(), size.height.toInt()),
-            colorFilter = colorFilter
-        )
-    }
-
     drawWithLayer {
 
+        // Draw foreground rating items
         for (i in 0 until itemCount) {
-            val start = (imageWidth * i + space * i).toInt()
+            val start = imageWidth * i + space * i
 
             // Destination
-            drawImage(
-                image = imageForeground,
-                dstOffset = IntOffset(start, 0),
-                dstSize = IntSize(size.height.toInt(), size.height.toInt()),
-                colorFilter = colorFilter
-            )
+            translate(left = start, top = 0f) {
+                drawImage(
+                    image = imageForeground,
+                    dstSize = IntSize(size.height.toInt(), size.height.toInt()),
+                    colorFilter = colorFilter
+                )
+            }
         }
 
-        val end = imageWidth * itemCount + space * (itemCount - 1)
-        val start = rating * imageWidth + ratingInt * space
-        val rectWidth = end - start
+        // End of rating bar
+        val startOfEmptyItems = imageWidth * itemCount + space * (itemCount - 1)
+        // Start of empty rating items
+        val endOfFilledItems = rating * imageWidth + ratingInt * space
+        // Rectangle width that covers empty items
+        val rectWidth = startOfEmptyItems - endOfFilledItems
 
         // Source
         drawRect(
             Color.Transparent,
-            topLeft = Offset(start, 0f),
+            topLeft = Offset(endOfFilledItems, 0f),
             size = Size(rectWidth, height = size.height),
             blendMode = BlendMode.SrcIn
         )
+
+        for (i in 0 until itemCount) {
+
+            translate(left = (imageWidth * i + space * i), top = 0f) {
+                drawImage(
+                    image = imageBackground,
+                    dstSize = IntSize(size.height.toInt(), size.height.toInt()),
+                    colorFilter = colorFilter
+                )
+            }
+        }
 
         shimmerData?.let { shimmerData ->
             val progress = shimmerData.progress
@@ -571,10 +584,13 @@ private fun DrawScope.drawRatingImages(
             drawRect(
                 brush = Brush.linearGradient(
                     shimmerData.colors,
-                    start = Offset(end * progress, end * progress),
-                    end = Offset(end * progress + 50f, end * progress + 50f)
+                    start = Offset(
+                        x = endOfFilledItems * progress - imageWidth,
+                        y = endOfFilledItems * progress - imageWidth
+                    ),
+                    end = Offset(endOfFilledItems * progress, endOfFilledItems * progress)
                 ),
-                size = Size(end, size.height),
+                size = Size(endOfFilledItems, size.height),
                 blendMode = BlendMode.SrcIn
             )
         }
