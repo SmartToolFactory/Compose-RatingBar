@@ -11,6 +11,12 @@ internal data class ShimmerData(
     val progress: Float,
 )
 
+/**
+ * Shimmer for rating items
+ * @param colors colors that are displayed on brush
+ * @param animationSpec [InfiniteRepeatableSpec] to set animation and repeat modes either repeat
+ * or reverse.
+ */
 @Immutable
 data class Shimmer(
     val colors: List<Color> = listOf(

@@ -30,6 +30,22 @@ import kotlinx.coroutines.launch
 /**
  * Rating bar that can be used for setting rating by passing a fixed value or using gestures
  * to change current [rating]
+ *
+ * @param rating value to be set on this rating bar
+ * @param imageBackground background for rating items. Item with borders to
+ * show empty values
+ * @param imageForeground foreground for rating items. Filled item to show percentage of rating
+ * @param tint color for background and foreground items
+ * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
+ * or vector file by default
+ * @param animationEnabled when animation is enabled tap on any value is animated
+ * @param gestureEnabled when gesture is not enabled value can only be changed by setting [rating]
+ * @param shimmer shimmer effect for having a glow
+ * @param itemCount maximum number of items
+ * @param space space between rating items in dp
+ * @param onRatingChange callback to notify user when rating has changed. This is helpful
+ * for getting change after tap or drag gesture
+ *
  */
 @Composable
 fun RatingBar(
@@ -81,6 +97,26 @@ fun RatingBar(
     )
 }
 
+/**
+ * Rating bar that can be used for setting rating by passing a fixed value or using gestures
+ * to change current [rating]
+ *
+ * @param rating value to be set on this rating bar
+ * @param painterBackground background for rating items. Item with borders to
+ * show empty values
+ * @param painterForeground foreground for rating items. Filled item to show percentage of rating
+ * @param tint color for background and foreground items
+ * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
+ * or vector file by default
+ * @param animationEnabled when animation is enabled tap on any value is animated
+ * @param gestureEnabled when gesture is not enabled value can only be changed by setting [rating]
+ * @param shimmer shimmer effect for having a glow
+ * @param itemCount maximum number of items
+ * @param space space between rating items in dp
+ * @param onRatingChange callback to notify user when rating has changed. This is helpful
+ * for getting change after tap or drag gesture
+ *
+ */
 @Composable
 fun RatingBar(
     modifier: Modifier = Modifier,
@@ -132,6 +168,26 @@ fun RatingBar(
     )
 }
 
+/**
+ * Rating bar that can be used for setting rating by passing a fixed value or using gestures
+ * to change current [rating]
+ *
+ * @param rating value to be set on this rating bar
+ * @param imageVectorBackground background for rating items. Item with borders to
+ * show empty values
+ * @param imageVectorForeground foreground for rating items. Filled item to show percentage of rating
+ * @param tint color for background and foreground items
+ * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
+ * or vector file by default
+ * @param animationEnabled when animation is enabled tap on any value is animated
+ * @param gestureEnabled when gesture is not enabled value can only be changed by setting [rating]
+ * @param shimmer shimmer effect for having a glow
+ * @param itemCount maximum number of items
+ * @param space space between rating items in dp
+ * @param onRatingChange callback to notify user when rating has changed. This is helpful
+ * for getting change after tap or drag gesture
+ *
+ */
 @Composable
 fun RatingBar(
     modifier: Modifier = Modifier,
