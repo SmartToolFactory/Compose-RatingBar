@@ -397,9 +397,7 @@ private fun DrawScope.drawRatingPainters(
 ) {
 
     val imageWidth = size.height
-
-    val reminder = rating - rating.toInt()
-    val ratingInt = (rating - reminder).toInt()
+    val ratingInt = rating.toInt()
 
     for (i in 0 until itemCount) {
 
@@ -444,7 +442,8 @@ private fun DrawScope.drawRatingPainters(
         )
 
         shimmerData?.let { shimmerData ->
-            val progress = shimmerData.progress
+
+           val progress = shimmerData.progress
 
             drawRect(
                 brush = Brush.linearGradient(
@@ -470,7 +469,6 @@ private fun DrawScope.drawRatingImages(
 ) {
 
     val imageWidth = size.height
-
     val ratingInt = rating.toInt()
 
     for (i in 0 until itemCount) {

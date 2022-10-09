@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                             imageForeground = imageForeground,
                             animationEnabled = false,
                             gestureEnabled = true,
-                            itemSize = 30.dp
+                            itemSize = 60.dp
                         ) {
                             rating = it
                         }
@@ -83,6 +83,7 @@ class MainActivity : ComponentActivity() {
                             painterForeground = painterResource(id = R.drawable.star_foreground),
                             animationEnabled = false,
                             gestureEnabled = false,
+                            tint = purple500,
                             shimmer = Shimmer(
                                 colors = listOf(
                                     purple500.copy(.9f),
@@ -124,9 +125,15 @@ class MainActivity : ComponentActivity() {
                             space = 2.dp,
                             imageVectorBackground = Icons.Default.FavoriteBorder,
                             imageVectorForeground = Icons.Default.Favorite,
-                            shimmer = Shimmer(color = pink500),
+                            shimmer = Shimmer(
+                                color = pink500,
+                                animationSpec = infiniteRepeatable(
+                                    animation = tween(durationMillis = 1000, easing = LinearEasing),
+                                    repeatMode = RepeatMode.Reverse
+                                )
+                            ),
                             tint = pink500,
-                            itemSize = 60.dp
+                            itemSize = 40.dp
                         ) {
                             rating4 = it
                         }
