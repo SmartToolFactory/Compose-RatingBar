@@ -6,7 +6,11 @@
 Rating bar to set fixed value or change rating by gestures with custom png files, ImageVectors with
 customization and shimmer effects.
 
-https://user-images.githubusercontent.com/35650605/194758019-01dfd747-b528-4522-b12f-1706517c89e0.mp4
+
+
+https://user-images.githubusercontent.com/35650605/194832373-d1fd8cd0-6918-454c-b016-2bdeeb3820b7.mp4
+
+
 
 ## Gradle Setup
 
