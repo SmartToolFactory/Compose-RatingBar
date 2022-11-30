@@ -136,11 +136,32 @@ private fun RatingbarDemo() {
                 shimmer = Shimmer(
                     color = pink500,
                     animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 1000, easing = LinearEasing),
+                        animation = tween(durationMillis = 2000, easing = LinearEasing),
                         repeatMode = RepeatMode.Reverse
                     )
                 ),
                 tintEmpty = pink500,
+                tintFilled = pink500,
+                itemSize = 40.dp
+            ) {
+                rating4 = it
+            }
+
+            RatingBar(
+                rating = rating4,
+                space = 2.dp,
+                imageVectorEmpty = Icons.Default.FavoriteBorder,
+                imageVectorFFilled = Icons.Default.Favorite,
+                shimmer = Shimmer(
+                    color = pink500,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = 2000, easing = LinearEasing),
+                        repeatMode = RepeatMode.Restart
+                    ),
+                    drawBorder = true
+                ),
+                tintEmpty = pink500,
+                tintFilled = pink500,
                 itemSize = 40.dp
             ) {
                 rating4 = it
