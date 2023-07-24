@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -36,8 +38,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.smarttoolfactory.ratingbar.model.RatingInterval
 import com.smarttoolfactory.ratingbar.model.Shimmer
 import com.smarttoolfactory.ratingbar.model.ShimmerData
+import com.smarttoolfactory.ratingbar.model.getRatingForInterval
 import kotlinx.coroutines.launch
 
 /**
@@ -56,6 +60,11 @@ import kotlinx.coroutines.launch
  * @param shimmer shimmer effect for having a glow
  * @param itemCount maximum number of items
  * @param space space between rating items in dp
+ * @param ratingInterval interval of rating. [RatingInterval.Full] returns integer values,
+ * [RatingInterval.Half] returns multiples of 0.5, and [RatingInterval.Unconstrained] returns
+ * current value without any limitation up to [itemSize]
+ * @param allowZeroRating when true [RatingInterval.Full] or [RatingInterval.Half] allowys
+ * user to set value zero
  * @param onRatingChange callback to notify user when rating has changed. This is helpful
  * for getting change after tap or drag gesture
  *
@@ -74,6 +83,8 @@ fun RatingBar(
     shimmer: Shimmer? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
+    ratingInterval: RatingInterval = RatingInterval.Unconstrained,
+    allowZeroRating: Boolean = true,
     onRatingChange: ((Float) -> Unit)? = null
 ) {
     val intrinsicWidth = imageEmpty.width.toFloat()
@@ -91,9 +102,26 @@ fun RatingBar(
         } else null
     }
 
+    // This is for setting initial value to zero if it's set initially
+    var checkInitialZeroWhenNotAllowed by remember {
+        mutableStateOf(allowZeroRating.not() && rating == 0f)
+    }
+
+    val ratingFraction = if (checkInitialZeroWhenNotAllowed && rating == 0f) 0f else
+        rating.getRatingForInterval(
+            ratingInterval = ratingInterval,
+            allowZero = allowZeroRating,
+        )
+
+    LaunchedEffect(key1 = checkInitialZeroWhenNotAllowed) {
+        if (checkInitialZeroWhenNotAllowed) {
+            checkInitialZeroWhenNotAllowed = false
+        }
+    }
+
     RatingBarImpl(
         modifier = modifier,
-        rating = rating,
+        rating = ratingFraction,
         intrinsicWidth = intrinsicWidth,
         intrinsicHeight = intrinsicHeight,
         itemSize = itemSize,
@@ -114,6 +142,8 @@ fun RatingBar(
                 space = spaceBetween,
             )
         },
+        ratingInterval = ratingInterval,
+        allowZeroRating = allowZeroRating,
         onRatingChange = onRatingChange
     )
 }
@@ -134,6 +164,10 @@ fun RatingBar(
  * @param shimmer shimmer effect for having a glow
  * @param itemCount maximum number of items
  * @param space space between rating items in dp
+ * [RatingInterval.Half] returns multiples of 0.5, and [RatingInterval.Unconstrained] returns
+ * current value without any limitation up to [itemSize]
+ * @param allowZeroRating when true [RatingInterval.Full] or [RatingInterval.Half] allowys
+ * user to set value zero
  * @param onRatingChange callback to notify user when rating has changed. This is helpful
  * for getting change after tap or drag gesture
  *
@@ -152,6 +186,8 @@ fun RatingBar(
     shimmer: Shimmer? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
+    ratingInterval: RatingInterval = RatingInterval.Unconstrained,
+    allowZeroRating: Boolean = true,
     onRatingChange: ((Float) -> Unit)? = null
 ) {
 
@@ -164,9 +200,26 @@ fun RatingBar(
         } else null
     }
 
+    // This is for setting initial value to zero if it's set initially
+    var checkInitialZeroWhenNotAllowed by remember {
+        mutableStateOf(allowZeroRating.not() && rating == 0f)
+    }
+
+    val ratingFraction = if (checkInitialZeroWhenNotAllowed && rating == 0f) 0f else
+        rating.getRatingForInterval(
+            ratingInterval = ratingInterval,
+            allowZero = allowZeroRating,
+        )
+
+    LaunchedEffect(key1 = checkInitialZeroWhenNotAllowed) {
+        if (checkInitialZeroWhenNotAllowed) {
+            checkInitialZeroWhenNotAllowed = false
+        }
+    }
+
     RatingBarImpl(
         modifier = modifier,
-        rating = rating,
+        rating = ratingFraction,
         intrinsicWidth = painterWidth,
         intrinsicHeight = painterHeight,
         itemSize = itemSize,
@@ -187,6 +240,8 @@ fun RatingBar(
                 spaceBetween
             )
         },
+        ratingInterval = ratingInterval,
+        allowZeroRating = allowZeroRating,
         onRatingChange = onRatingChange
     )
 }
@@ -207,6 +262,10 @@ fun RatingBar(
  * @param shimmer shimmer effect for having a glow
  * @param itemCount maximum number of items
  * @param space space between rating items in dp
+ * [RatingInterval.Half] returns multiples of 0.5, and [RatingInterval.Unconstrained] returns
+ * current value without any limitation up to [itemSize]
+ * @param allowZeroRating when true [RatingInterval.Full] or [RatingInterval.Half] allowys
+ * user to set value zero
  * @param onRatingChange callback to notify user when rating has changed. This is helpful
  * for getting change after tap or drag gesture
  *
@@ -225,6 +284,8 @@ fun RatingBar(
     shimmer: Shimmer? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
+    ratingInterval: RatingInterval = RatingInterval.Unconstrained,
+    allowZeroRating: Boolean = true,
     onRatingChange: ((Float) -> Unit)? = null
 ) {
 
@@ -240,9 +301,26 @@ fun RatingBar(
         } else null
     }
 
+    // This is for setting initial value to zero if it's set initially
+    var checkInitialZeroWhenNotAllowed by remember {
+        mutableStateOf(allowZeroRating.not() && rating == 0f)
+    }
+
+    val ratingFraction = if (checkInitialZeroWhenNotAllowed && rating == 0f) 0f else
+        rating.getRatingForInterval(
+            ratingInterval = ratingInterval,
+            allowZero = allowZeroRating,
+        )
+
+    LaunchedEffect(key1 = checkInitialZeroWhenNotAllowed) {
+        if (checkInitialZeroWhenNotAllowed) {
+            checkInitialZeroWhenNotAllowed = false
+        }
+    }
+
     RatingBarImpl(
         modifier = modifier,
-        rating = rating,
+        rating = ratingFraction,
         intrinsicWidth = painterWidth,
         intrinsicHeight = painterHeight,
         itemSize = itemSize,
@@ -263,6 +341,8 @@ fun RatingBar(
                 spaceBetween
             )
         },
+        ratingInterval = ratingInterval,
+        allowZeroRating = allowZeroRating,
         onRatingChange = onRatingChange
     )
 }
@@ -279,6 +359,8 @@ private fun RatingBarImpl(
     shimmer: Shimmer?,
     itemCount: Int = 5,
     space: Dp = 0.dp,
+    ratingInterval: RatingInterval,
+    allowZeroRating: Boolean,
     block: DrawScope.(
         rating: Float,
         space: Float,
@@ -340,6 +422,8 @@ private fun RatingBarImpl(
                         ratingBarDimension = ratingBarWidth,
                         space = spacePx,
                         totalCount = itemCount,
+                        ratingInterval = ratingInterval,
+                        allowZeroRating = allowZeroRating
                     )
 
                     coroutineScope.launch {
@@ -360,6 +444,8 @@ private fun RatingBarImpl(
                         ratingBarDimension = ratingBarWidth,
                         space = spacePx,
                         totalCount = itemCount,
+                        ratingInterval = ratingInterval,
+                        allowZeroRating = allowZeroRating
                     )
 
                     coroutineScope.launch {
@@ -378,7 +464,7 @@ private fun RatingBarImpl(
 
 
         if (shimmer != null) {
-            val progress = getProgress(shimmer.animationSpec)
+            val progress = getRatingShimmerProgress(shimmer.animationSpec)
             Box(
                 modifier = Modifier
                     .then(if (gestureEnabled) gestureModifier else Modifier)
@@ -415,14 +501,14 @@ private fun RatingBarImpl(
 }
 
 @Composable
-private fun getProgress(animationSpec: InfiniteRepeatableSpec<Float>): Float {
+private fun getRatingShimmerProgress(animationSpec: InfiniteRepeatableSpec<Float>): Float {
 
-    val transition = rememberInfiniteTransition()
+    val transition = rememberInfiniteTransition(label = "rating progress")
     val progress by transition.animateFloat(
 
         initialValue = 0f,
         targetValue = 1f,
-        animationSpec = animationSpec
+        animationSpec = animationSpec, label = "rating progress"
     )
 
     return progress
@@ -433,11 +519,13 @@ private fun getRatingFromTouchPosition(
     itemIntervals: List<ClosedFloatingPointRange<Float>>,
     ratingBarDimension: Float,
     space: Float,
-    totalCount: Int
+    totalCount: Int,
+    ratingInterval: RatingInterval,
+    allowZeroRating: Boolean
 ): Float {
 
     val ratingBarItemSize = (ratingBarDimension - space * (totalCount - 1)) / totalCount
-    val ratingInterval = ratingBarItemSize + space
+    val ratingItemInterval = ratingBarItemSize + space
 
     var rating = 0f
     var isInInterval = false
@@ -448,10 +536,12 @@ private fun getRatingFromTouchPosition(
         }
     }
 
-    rating = if (!isInInterval) (1 + x / ratingInterval).toInt().coerceAtMost(totalCount)
+    rating = if (!isInInterval) (1 + x / ratingItemInterval).toInt().coerceAtMost(totalCount)
         .toFloat() else rating
 
-    return rating.coerceIn(0f, totalCount.toFloat())
+    return rating
+        .getRatingForInterval(ratingInterval = ratingInterval, allowZero = allowZeroRating)
+        .coerceIn(0f, totalCount.toFloat())
 }
 
 private fun ratingItemPositions(
@@ -662,5 +752,6 @@ private fun DrawScope.drawWithLayer(block: DrawScope.() -> Unit) {
         restoreToCount(checkPoint)
     }
 }
+
 
 val DefaultColor = Color(0xffFFB300)
