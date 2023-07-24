@@ -415,6 +415,8 @@ private fun RatingBarImpl(
                 val ratingBarWidth = size.width.toFloat()
                 detectHorizontalDragGestures { change, _ ->
 
+                    change.consume()
+
                     val x = change.position.x
                     val newRating = getRatingFromTouchPosition(
                         x = x,
