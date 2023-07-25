@@ -253,7 +253,7 @@ fun RatingBar(
  * @param rating value to be set on this rating bar
  * @param imageVectorEmpty background for rating items. Item with borders to
  * show empty values
- * @param imageVectorFFilled foreground for rating items. Filled item to show percentage of rating
+ * @param imageVectorFilled foreground for rating items. Filled item to show percentage of rating
  * @param tintEmpty color for background and foreground items
  * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
  * or vector file by default
@@ -275,7 +275,7 @@ fun RatingBar(
     modifier: Modifier = Modifier,
     rating: Float,
     imageVectorEmpty: ImageVector,
-    imageVectorFFilled: ImageVector,
+    imageVectorFilled: ImageVector,
     tintEmpty: Color? = DefaultColor,
     tintFilled: Color? = null,
     itemSize: Dp = Dp.Unspecified,
@@ -290,7 +290,7 @@ fun RatingBar(
 ) {
 
     val painterBackground = rememberVectorPainter(image = imageVectorEmpty)
-    val painterForeground = rememberVectorPainter(image = imageVectorFFilled)
+    val painterForeground = rememberVectorPainter(image = imageVectorFilled)
 
     val painterWidth = painterBackground.intrinsicSize.width
     val painterHeight = painterBackground.intrinsicSize.height
@@ -414,8 +414,8 @@ private fun RatingBarImpl(
             .pointerInput(Unit) {
                 val ratingBarWidth = size.width.toFloat()
                 detectHorizontalDragGestures { change, _ ->
-
                     change.consume()
+
                     val x = change.position.x
                     val newRating = getRatingFromTouchPosition(
                         x = x,
@@ -504,12 +504,11 @@ private fun RatingBarImpl(
 @Composable
 private fun getRatingShimmerProgress(animationSpec: InfiniteRepeatableSpec<Float>): Float {
 
-    val transition = rememberInfiniteTransition(label = "rating progress")
+    val transition = rememberInfiniteTransition()
     val progress by transition.animateFloat(
-
         initialValue = 0f,
         targetValue = 1f,
-        animationSpec = animationSpec, label = "rating progress"
+        animationSpec = animationSpec,
     )
 
     return progress
