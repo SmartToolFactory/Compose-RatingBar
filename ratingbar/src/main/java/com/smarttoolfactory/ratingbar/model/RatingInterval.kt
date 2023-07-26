@@ -13,9 +13,8 @@ internal fun Float.getRatingForInterval(
 
     val delta = if (allowZero && this < 0.1f) 0f else 0.001f
 
-    println("getRatingInterval $this, allowZero: $allowZero")
 
-    return when (ratingInterval) {
+    val result = when (ratingInterval) {
         RatingInterval.Full -> {
             ceil(this.coerceAtLeast(delta).toDouble()).toFloat()
         }
@@ -24,7 +23,10 @@ internal fun Float.getRatingForInterval(
 
             val carry = this - this.toInt()
 
-            if (carry < 0.5f) {
+            if (carry == 0f || carry == 0.5f) {
+                this
+            } else
+                if (carry < 0.5) {
                 this.toInt().toFloat() + 0.5f
             } else {
                 ceil(this.coerceAtLeast(delta).toDouble()).toFloat()
@@ -34,4 +36,5 @@ internal fun Float.getRatingForInterval(
         else -> this
     }
 
+    return result
 }
