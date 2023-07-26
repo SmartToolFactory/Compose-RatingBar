@@ -85,7 +85,7 @@ fun RatingBar(
     space: Dp = 0.dp,
     ratingInterval: RatingInterval = RatingInterval.Unconstrained,
     allowZeroRating: Boolean = true,
-    onRatingChange: ((Float) -> Unit)? = null
+    onRatingChange: (Float) -> Unit
 ) {
     val intrinsicWidth = imageEmpty.width.toFloat()
     val intrinsicHeight = imageEmpty.height.toFloat()
@@ -102,7 +102,8 @@ fun RatingBar(
         } else null
     }
 
-    // This is for setting initial value to zero if it's set initially
+    // This is for setting initial value to zero if it's set initially and
+    // setting value to zero is not allowed with gestures
     var checkInitialZeroWhenNotAllowed by remember {
         mutableStateOf(allowZeroRating.not() && rating == 0f)
     }
@@ -188,7 +189,7 @@ fun RatingBar(
     space: Dp = 0.dp,
     ratingInterval: RatingInterval = RatingInterval.Unconstrained,
     allowZeroRating: Boolean = true,
-    onRatingChange: ((Float) -> Unit)? = null
+    onRatingChange: (Float) -> Unit
 ) {
 
     val painterWidth = painterEmpty.intrinsicSize.width
@@ -200,7 +201,8 @@ fun RatingBar(
         } else null
     }
 
-    // This is for setting initial value to zero if it's set initially
+    // This is for setting initial value to zero if it's set initially and
+    // setting value to zero is not allowed with gestures
     var checkInitialZeroWhenNotAllowed by remember {
         mutableStateOf(allowZeroRating.not() && rating == 0f)
     }
@@ -286,7 +288,7 @@ fun RatingBar(
     space: Dp = 0.dp,
     ratingInterval: RatingInterval = RatingInterval.Unconstrained,
     allowZeroRating: Boolean = true,
-    onRatingChange: ((Float) -> Unit)? = null
+    onRatingChange: (Float) -> Unit
 ) {
 
     val painterBackground = rememberVectorPainter(image = imageVectorEmpty)
@@ -301,7 +303,8 @@ fun RatingBar(
         } else null
     }
 
-    // This is for setting initial value to zero if it's set initially
+    // This is for setting initial value to zero if it's set initially and
+    // setting value to zero is not allowed with gestures
     var checkInitialZeroWhenNotAllowed by remember {
         mutableStateOf(allowZeroRating.not() && rating == 0f)
     }
@@ -366,7 +369,7 @@ private fun RatingBarImpl(
         space: Float,
         shimmerData: ShimmerData?,
     ) -> Unit,
-    onRatingChange: ((Float) -> Unit)? = null
+    onRatingChange: (Float) -> Unit
 ) {
 
     Box(modifier) {
@@ -398,7 +401,7 @@ private fun RatingBarImpl(
         val coroutineScope = rememberCoroutineScope()
         val animatableRating = remember { Animatable(if (animationEnabled) 0f else coerced) }
 
-        LaunchedEffect(key1 = if (gestureEnabled) Unit else coerced) {
+        LaunchedEffect(key1 = coerced) {
             if (animationEnabled) {
                 animatableRating.animateTo(
                     targetValue = coerced,
@@ -429,7 +432,7 @@ private fun RatingBarImpl(
 
                     coroutineScope.launch {
                         animatableRating.snapTo(newRating)
-                        onRatingChange?.invoke(animatableRating.value)
+                        onRatingChange.invoke(newRating)
                     }
 
                 }
@@ -458,7 +461,7 @@ private fun RatingBarImpl(
                         } else {
                             animatableRating.snapTo(newRating)
                         }
-                        onRatingChange?.invoke(animatableRating.value)
+                        onRatingChange.invoke(newRating)
                     }
                 }
             }
