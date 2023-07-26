@@ -85,6 +85,7 @@ fun RatingBar(
     space: Dp = 0.dp,
     ratingInterval: RatingInterval = RatingInterval.Unconstrained,
     allowZeroRating: Boolean = true,
+    onRatingChangeFinished: ((Float) -> Unit)? = null,
     onRatingChange: (Float) -> Unit
 ) {
     val intrinsicWidth = imageEmpty.width.toFloat()
@@ -145,6 +146,7 @@ fun RatingBar(
         },
         ratingInterval = ratingInterval,
         allowZeroRating = allowZeroRating,
+        onRatingChangeFinished = onRatingChangeFinished,
         onRatingChange = onRatingChange
     )
 }
@@ -189,6 +191,7 @@ fun RatingBar(
     space: Dp = 0.dp,
     ratingInterval: RatingInterval = RatingInterval.Unconstrained,
     allowZeroRating: Boolean = true,
+    onRatingChangeFinished: ((Float) -> Unit)? = null,
     onRatingChange: (Float) -> Unit
 ) {
 
@@ -244,6 +247,7 @@ fun RatingBar(
         },
         ratingInterval = ratingInterval,
         allowZeroRating = allowZeroRating,
+        onRatingChangeFinished = onRatingChangeFinished,
         onRatingChange = onRatingChange
     )
 }
@@ -288,6 +292,7 @@ fun RatingBar(
     space: Dp = 0.dp,
     ratingInterval: RatingInterval = RatingInterval.Unconstrained,
     allowZeroRating: Boolean = true,
+    onRatingChangeFinished: ((Float) -> Unit)? = null,
     onRatingChange: (Float) -> Unit
 ) {
 
@@ -346,6 +351,7 @@ fun RatingBar(
         },
         ratingInterval = ratingInterval,
         allowZeroRating = allowZeroRating,
+        onRatingChangeFinished = onRatingChangeFinished,
         onRatingChange = onRatingChange
     )
 }
@@ -369,6 +375,7 @@ private fun RatingBarImpl(
         space: Float,
         shimmerData: ShimmerData?,
     ) -> Unit,
+    onRatingChangeFinished: ((Float) -> Unit)? = null,
     onRatingChange: (Float) -> Unit
 ) {
 
@@ -416,26 +423,31 @@ private fun RatingBarImpl(
         val gestureModifier = Modifier
             .pointerInput(Unit) {
                 val ratingBarWidth = size.width.toFloat()
-                detectHorizontalDragGestures { change, _ ->
-                    change.consume()
+                detectHorizontalDragGestures(
+                    onHorizontalDrag = { change, _ ->
+                        change.consume()
 
-                    val x = change.position.x
-                    val newRating = getRatingFromTouchPosition(
-                        x = x,
-                        itemIntervals = itemIntervals,
-                        ratingBarDimension = ratingBarWidth,
-                        space = spacePx,
-                        totalCount = itemCount,
-                        ratingInterval = ratingInterval,
-                        allowZeroRating = allowZeroRating
-                    )
+                        val x = change.position.x
+                        val newRating = getRatingFromTouchPosition(
+                            x = x,
+                            itemIntervals = itemIntervals,
+                            ratingBarDimension = ratingBarWidth,
+                            space = spacePx,
+                            totalCount = itemCount,
+                            ratingInterval = ratingInterval,
+                            allowZeroRating = allowZeroRating
+                        )
 
-                    coroutineScope.launch {
-                        animatableRating.snapTo(newRating)
-                        onRatingChange.invoke(newRating)
+                        coroutineScope.launch {
+                            animatableRating.snapTo(newRating)
+                            onRatingChange.invoke(newRating)
+                        }
+
+                    },
+                    onDragEnd = {
+                        onRatingChangeFinished?.invoke(animatableRating.targetValue)
                     }
-
-                }
+                )
             }
             .pointerInput(Unit) {
                 val ratingBarWidth = size.width.toFloat()
@@ -462,6 +474,7 @@ private fun RatingBarImpl(
                             animatableRating.snapTo(newRating)
                         }
                         onRatingChange.invoke(newRating)
+                        onRatingChangeFinished?.invoke(newRating)
                     }
                 }
             }
