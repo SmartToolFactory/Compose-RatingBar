@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -73,9 +74,11 @@ fun SnackCard(
 
                     Text(
                         color = textColor,
-                        fontSize = 28.sp,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        text = snack.name
+                        text = snack.name,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
