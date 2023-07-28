@@ -89,7 +89,6 @@ fun SnackCard(
                         painterFilled = painterResource(id = R.drawable.star_foreground),
                         tintEmpty = Color(0xff795548),
                         tintFilled = Color(0xff795548),
-                        animationEnabled = true,
                         itemSize = 22.dp
                     ) {
                         onRateChange(it)

@@ -79,8 +79,8 @@ fun RatingBar(
     tintEmpty: Color? = null,
     tintFilled: Color? = null,
     itemSize: Dp = Dp.Unspecified,
-    animationEnabled: Boolean = true,
-    gestureEnabled: Boolean = true,
+    rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
+    gestureMode: GestureMode = GestureMode.DragAndTouch,
     shimmer: Shimmer? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
@@ -128,8 +128,8 @@ fun RatingBar(
         intrinsicWidth = intrinsicWidth,
         intrinsicHeight = intrinsicHeight,
         itemSize = itemSize,
-        animationEnabled = animationEnabled,
-        gestureEnabled = gestureEnabled,
+        rateChangeMode = rateChangeMode,
+        gestureMode = gestureMode,
         shimmer = shimmer,
         itemCount = itemCount,
         space = space,
@@ -185,8 +185,8 @@ fun RatingBar(
     tintEmpty: Color? = DefaultColor,
     tintFilled: Color? = null,
     itemSize: Dp = Dp.Unspecified,
-    animationEnabled: Boolean = true,
-    gestureEnabled: Boolean = true,
+    rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
+    gestureMode: GestureMode = GestureMode.DragAndTouch,
     shimmer: Shimmer? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
@@ -229,8 +229,8 @@ fun RatingBar(
         intrinsicWidth = painterWidth,
         intrinsicHeight = painterHeight,
         itemSize = itemSize,
-        animationEnabled = animationEnabled,
-        gestureEnabled = gestureEnabled,
+        rateChangeMode = rateChangeMode,
+        gestureMode = gestureMode,
         shimmer = shimmer,
         itemCount = itemCount,
         space = space,
@@ -286,8 +286,8 @@ fun RatingBar(
     tintEmpty: Color? = DefaultColor,
     tintFilled: Color? = null,
     itemSize: Dp = Dp.Unspecified,
-    animationEnabled: Boolean = true,
-    gestureEnabled: Boolean = true,
+    rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
+    gestureMode: GestureMode = GestureMode.DragAndTouch,
     shimmer: Shimmer? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
@@ -333,8 +333,8 @@ fun RatingBar(
         intrinsicWidth = painterWidth,
         intrinsicHeight = painterHeight,
         itemSize = itemSize,
-        animationEnabled = animationEnabled,
-        gestureEnabled = gestureEnabled,
+        rateChangeMode = rateChangeMode,
+        gestureMode = gestureMode,
         shimmer = shimmer,
         itemCount = itemCount,
         space = space,
@@ -364,8 +364,8 @@ private fun RatingBarImpl(
     itemSize: Dp = Dp.Unspecified,
     intrinsicWidth: Float,
     intrinsicHeight: Float,
-    animationEnabled: Boolean = true,
-    gestureEnabled: Boolean = true,
+    rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
+    gestureMode: GestureMode = GestureMode.DragAndTouch,
     shimmer: Shimmer?,
     itemCount: Int = 5,
     space: Dp = 0.dp,
@@ -407,13 +407,15 @@ private fun RatingBarImpl(
         val coerced = rating.coerceIn(0f, itemCount.toFloat())
 
         val coroutineScope = rememberCoroutineScope()
-        val animatableRating = remember { Animatable(if (animationEnabled) 0f else coerced) }
+        val animatableRating = remember {
+            Animatable(if (rateChangeMode is RateChangeMode.AnimatedChange) 0f else coerced)
+        }
 
         LaunchedEffect(key1 = coerced) {
-            if (animationEnabled) {
+            if (rateChangeMode is RateChangeMode.AnimatedChange) {
                 animatableRating.animateTo(
                     targetValue = coerced,
-                    animationSpec = tween(300, easing = LinearEasing)
+                    animationSpec = rateChangeMode.animationSpec
 
                 )
             } else {
@@ -422,72 +424,82 @@ private fun RatingBarImpl(
         }
 
         val gestureModifier = Modifier
-            .pointerInput(Unit) {
-                val ratingBarWidth = size.width.toFloat()
-                detectHorizontalDragGestures(
-                    onHorizontalDrag = { change, _ ->
-                        change.consume()
+            .then(
+                if (gestureMode == GestureMode.DragAndTouch) {
+                    Modifier.pointerInput(Unit) {
+                        val ratingBarWidth = size.width.toFloat()
+                        detectHorizontalDragGestures(
+                            onHorizontalDrag = { change, _ ->
+                                change.consume()
 
-                        val x = change.position.x
-                        val newRating = getRatingFromTouchPosition(
-                            x = x,
-                            itemIntervals = itemIntervals,
-                            ratingBarDimension = ratingBarWidth,
-                            space = spacePx,
-                            totalCount = itemCount,
-                            ratingInterval = ratingInterval,
-                            allowZeroRating = allowZeroRating
+                                val x = change.position.x
+                                val newRating = getRatingFromTouchPosition(
+                                    x = x,
+                                    itemIntervals = itemIntervals,
+                                    ratingBarDimension = ratingBarWidth,
+                                    space = spacePx,
+                                    totalCount = itemCount,
+                                    ratingInterval = ratingInterval,
+                                    allowZeroRating = allowZeroRating
+                                )
+
+                                onRatingChange.invoke(newRating)
+
+                                coroutineScope.launch {
+                                    animatableRating.snapTo(newRating)
+                                }
+
+                            },
+                            onDragEnd = {
+                                onRatingChangeFinished?.invoke(animatableRating.targetValue)
+                            }
                         )
-
-                        onRatingChange.invoke(newRating)
-
-                        coroutineScope.launch {
-                            animatableRating.snapTo(newRating)
-                        }
-
-                    },
-                    onDragEnd = {
-                        onRatingChangeFinished?.invoke(animatableRating.targetValue)
                     }
-                )
-            }
-            .pointerInput(Unit) {
-                val ratingBarWidth = size.width.toFloat()
-
-                detectTapGestures { change ->
-                    val x = change.x
-                    val newRating = getRatingFromTouchPosition(
-                        x = x,
-                        itemIntervals = itemIntervals,
-                        ratingBarDimension = ratingBarWidth,
-                        space = spacePx,
-                        totalCount = itemCount,
-                        ratingInterval = ratingInterval,
-                        allowZeroRating = allowZeroRating
-                    )
-
-                    onRatingChange.invoke(newRating)
-                    onRatingChangeFinished?.invoke(newRating)
-
-                    coroutineScope.launch {
-                        if (animationEnabled) {
-                            animatableRating.animateTo(
-                                targetValue = newRating,
-                                animationSpec = tween(300, easing = LinearEasing)
-                            )
-                        } else {
-                            animatableRating.snapTo(newRating)
-                        }
-                    }
+                } else {
+                    Modifier
                 }
-            }
+            )
+            .then(
+                if (gestureMode != GestureMode.None) {
+                    Modifier.pointerInput(Unit) {
+                        val ratingBarWidth = size.width.toFloat()
 
+                        detectTapGestures { change ->
+                            val x = change.x
+                            val newRating = getRatingFromTouchPosition(
+                                x = x,
+                                itemIntervals = itemIntervals,
+                                ratingBarDimension = ratingBarWidth,
+                                space = spacePx,
+                                totalCount = itemCount,
+                                ratingInterval = ratingInterval,
+                                allowZeroRating = allowZeroRating
+                            )
+
+                            onRatingChange.invoke(newRating)
+                            onRatingChangeFinished?.invoke(newRating)
+
+                            coroutineScope.launch {
+                                if (rateChangeMode is RateChangeMode.AnimatedChange) {
+                                    animatableRating.animateTo(
+                                        targetValue = newRating,
+                                        animationSpec = rateChangeMode.animationSpec
+                                    )
+                                } else {
+                                    animatableRating.snapTo(newRating)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Modifier
+                }
+            )
 
         if (shimmer != null) {
             val progress = getRatingShimmerProgress(shimmer.animationSpec)
             Box(
-                modifier = Modifier
-                    .then(if (gestureEnabled) gestureModifier else Modifier)
+                modifier = gestureModifier
                     .width(totalWidth)
                     .height(height)
                     .drawBehind {
@@ -504,8 +516,7 @@ private fun RatingBarImpl(
             )
         } else {
             Box(
-                modifier = Modifier
-                    .then(if (gestureEnabled) gestureModifier else Modifier)
+                modifier = gestureModifier
                     .width(totalWidth)
                     .height(height)
                     .drawBehind {

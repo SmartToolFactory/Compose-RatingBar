@@ -2,7 +2,9 @@ package com.smarttoolfactory.composeratingbar.demo
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -31,16 +32,20 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smarttoolfactory.composeratingbar.R
 import com.smarttoolfactory.ratingbar.DefaultColor
+import com.smarttoolfactory.ratingbar.GestureMode
+import com.smarttoolfactory.ratingbar.RateChangeMode
 import com.smarttoolfactory.ratingbar.RatingBar
 import com.smarttoolfactory.ratingbar.model.RatingInterval
 import com.smarttoolfactory.ratingbar.model.Shimmer
 
 val rateColor = Color(0xffFFA000)
 
+@Preview
 @Composable
 fun RatingbarDemo() {
 
@@ -59,15 +64,16 @@ fun RatingbarDemo() {
         val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
         val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
 
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 8.dp, vertical = 16.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp, vertical = 16.dp)
         ) {
 
             Text(
                 modifier = Modifier.padding(vertical = 8.dp),
                 text = "Rating Intervals",
-                fontSize = 28.sp,
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.secondary
             )
@@ -77,8 +83,7 @@ fun RatingbarDemo() {
                 space = 2.dp,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                animationEnabled = true,
-                gestureEnabled = true,
+                rateChangeMode = RateChangeMode.AnimatedChange(),
                 ratingInterval = RatingInterval.Full,
                 itemSize = 60.dp
             ) {
@@ -90,8 +95,6 @@ fun RatingbarDemo() {
                 space = 2.dp,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                animationEnabled = true,
-                gestureEnabled = true,
                 ratingInterval = RatingInterval.Half,
                 itemSize = 60.dp
             ) {
@@ -103,8 +106,6 @@ fun RatingbarDemo() {
                 space = 2.dp,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                animationEnabled = true,
-                gestureEnabled = true,
                 ratingInterval = RatingInterval.Unconstrained,
                 itemSize = 60.dp
             ) {
@@ -119,26 +120,56 @@ fun RatingbarDemo() {
 
             Slider(value = rating, onValueChange = { rating = it }, valueRange = 0f..5f)
 
-            Text(text = "animationEnabled, gestureDisabled")
+            Text(
+                modifier = Modifier.padding(vertical = 8.dp),
+                text = "Rate Change Modes",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary
+            )
+
+            Text(text = "InstantChange")
 
             RatingBar(
                 rating = rating2,
-                imageVectorEmpty = Icons.Filled.Star,
-                imageVectorFilled = Icons.Filled.Star,
-                animationEnabled = false,
-                gestureEnabled = false,
-                tintEmpty = Color(0xffBDBDBD),
-                shimmer = Shimmer(
-                    colors = listOf(
-                        rateColor.copy(.9f),
-                        rateColor.copy(.3f),
-                        rateColor.copy(.9f)
-                    )
-                ),
-                itemSize = 40.dp
+                space = 2.dp,
+                imageEmpty = imageBackground,
+                imageFilled = imageForeground,
+                rateChangeMode = RateChangeMode.InstantChange,
+                itemSize = 60.dp
             ) {
                 rating2 = it
             }
+
+            Text(text = "LinearEasing")
+            RatingBar(
+                rating = rating2,
+                space = 2.dp,
+                imageEmpty = imageBackground,
+                imageFilled = imageForeground,
+                rateChangeMode = RateChangeMode.AnimatedChange(),
+                itemSize = 60.dp
+            ) {
+                rating2 = it
+            }
+
+            Text(text = "spring")
+            RatingBar(
+                rating = rating2,
+                space = 2.dp,
+                imageEmpty = imageBackground,
+                imageFilled = imageForeground,
+                rateChangeMode = RateChangeMode.AnimatedChange(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioHighBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ),
+                itemSize = 60.dp
+            ) {
+                rating2 = it
+            }
+
 
             Slider(
                 value = rating2,
@@ -154,22 +185,58 @@ fun RatingbarDemo() {
 
             Text(
                 modifier = Modifier.padding(vertical = 8.dp),
-                text = "RatingBar Properties",
-                fontSize = 28.sp,
+                text = "Gesture Modes",
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.secondary
             )
+
+            Text(text = "DragAndTouch")
             RatingBar(
                 rating = rating3,
                 painterEmpty = painterResource(id = R.drawable.star_background),
                 painterFilled = painterResource(id = R.drawable.star_foreground),
+                gestureMode = GestureMode.DragAndTouch,
                 tintEmpty = Color(0xff795548),
                 tintFilled = Color(0xff795548),
-                animationEnabled = true,
                 itemSize = 60.dp
             ) {
                 rating3 = it
             }
+
+            Text(text = "Touch")
+            RatingBar(
+                rating = rating3,
+                painterEmpty = painterResource(id = R.drawable.star_background),
+                painterFilled = painterResource(id = R.drawable.star_foreground),
+                gestureMode = GestureMode.Touch,
+                tintEmpty = Color(0xff795548),
+                tintFilled = Color(0xff795548),
+                itemSize = 60.dp
+            ) {
+                rating3 = it
+            }
+
+            Text(text = "None")
+            RatingBar(
+                rating = rating3,
+                painterEmpty = painterResource(id = R.drawable.star_background),
+                painterFilled = painterResource(id = R.drawable.star_foreground),
+                gestureMode = GestureMode.None,
+                tintEmpty = Color(0xff795548),
+                tintFilled = Color(0xff795548),
+                itemSize = 60.dp
+            ) {
+                rating3 = it
+            }
+
+            Text(
+                modifier = Modifier.padding(vertical = 8.dp),
+                text = "Color, Shape and Shimmer",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary
+            )
 
             val pink500 = Color(0xffE91E63)
             RatingBar(

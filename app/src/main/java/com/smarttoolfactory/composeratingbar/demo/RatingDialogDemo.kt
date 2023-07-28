@@ -139,8 +139,6 @@ fun RatingDialog(
                 space = 2.dp,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                animationEnabled = true,
-                gestureEnabled = true,
                 ratingInterval = RatingInterval.Half,
                 shimmer = Shimmer(
                     animationSpec = infiniteRepeatable(
