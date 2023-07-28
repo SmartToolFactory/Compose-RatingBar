@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.composeratingbar.demo.RatingBarListDemo
+import com.smarttoolfactory.composeratingbar.demo.RatingDialogDemo
 import com.smarttoolfactory.composeratingbar.demo.RatingbarDemo
 import com.smarttoolfactory.composeratingbar.ui.theme.ComposeRatingBarTheme
 import kotlinx.coroutines.launch
@@ -80,7 +81,8 @@ private fun HomeContent() {
 
         when (page) {
             0 -> RatingbarDemo()
-            else -> RatingBarListDemo()
+            1 -> RatingBarListDemo()
+            else -> RatingDialogDemo()
         }
     }
 }

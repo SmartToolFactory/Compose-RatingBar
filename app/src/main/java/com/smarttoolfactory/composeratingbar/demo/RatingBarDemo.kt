@@ -116,7 +116,7 @@ fun RatingbarDemo() {
 
             Slider(value = rating, onValueChange = { rating = it }, valueRange = 0f..5f)
 
-            Text(text = "animationEnabled, gestureEnabled")
+            Text(text = "animationEnabled, gestureDisabled")
 
             RatingBar(
                 rating = rating2,
