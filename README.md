@@ -43,17 +43,20 @@ dependencies {
 fun RatingBar(
   modifier: Modifier = Modifier,
   rating: Float,
-  imageEmpty: ImageBitmap,
-  imageFilled: ImageBitmap,
-  tintEmpty: Color? = null,
+  painterEmpty: Painter,
+  painterFilled: Painter,
+  tintEmpty: Color? = DefaultColor,
   tintFilled: Color? = null,
   itemSize: Dp = Dp.Unspecified,
-  animationEnabled: Boolean = true,
-  gestureEnabled: Boolean = true,
+  rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
+  gestureMode: GestureMode = GestureMode.DragAndTouch,
   shimmer: Shimmer? = null,
   itemCount: Int = 5,
   space: Dp = 0.dp,
-  onRatingChange: ((Float) -> Unit)? = null
+  ratingInterval: RatingInterval = RatingInterval.Unconstrained,
+  allowZeroRating: Boolean = true,
+  onRatingChangeFinished: ((Float) -> Unit)? = null,
+  onRatingChange: (Float) -> Unit
 )
 ```
 
@@ -62,17 +65,20 @@ fun RatingBar(
 fun RatingBar(
   modifier: Modifier = Modifier,
   rating: Float,
-  painterEmpty: Painter,
-  painterFilled: Painter,
-  tintEmpty: Color? = DefaultColor,
+  imageEmpty: ImageBitmap,
+  imageFilled: ImageBitmap,
+  tintEmpty: Color? = null,
   tintFilled: Color? = null,
   itemSize: Dp = Dp.Unspecified,
-  animationEnabled: Boolean = true,
-  gestureEnabled: Boolean = true,
+  rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
+  gestureMode: GestureMode = GestureMode.DragAndTouch,
   shimmer: Shimmer? = null,
   itemCount: Int = 5,
   space: Dp = 0.dp,
-  onRatingChange: ((Float) -> Unit)? = null
+  ratingInterval: RatingInterval = RatingInterval.Unconstrained,
+  allowZeroRating: Boolean = true,
+  onRatingChangeFinished: ((Float) -> Unit)? = null,
+  onRatingChange: (Float) -> Unit
 ) 
 ```
 
@@ -82,17 +88,20 @@ fun RatingBar(
   modifier: Modifier = Modifier,
   rating: Float,
   imageVectorEmpty: ImageVector,
-  imageVectorFFilled: ImageVector,
+  imageVectorFilled: ImageVector,
   tintEmpty: Color? = DefaultColor,
   tintFilled: Color? = null,
   itemSize: Dp = Dp.Unspecified,
-  animationEnabled: Boolean = true,
-  gestureEnabled: Boolean = true,
+  rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
+  gestureMode: GestureMode = GestureMode.DragAndTouch,
   shimmer: Shimmer? = null,
   itemCount: Int = 5,
   space: Dp = 0.dp,
-  onRatingChange: ((Float) -> Unit)? = null
-)
+  ratingInterval: RatingInterval = RatingInterval.Unconstrained,
+  allowZeroRating: Boolean = true,
+  onRatingChangeFinished: ((Float) -> Unit)? = null,
+  onRatingChange: (Float) -> Unit
+) 
 ```
 
 ## Usage

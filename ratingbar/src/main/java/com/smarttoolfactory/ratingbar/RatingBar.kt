@@ -56,15 +56,15 @@ import kotlinx.coroutines.launch
  * @param tintEmpty color for background and foreground items
  * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
  * or vector file by default
- * @param animationEnabled when animation is enabled tap on any value is animated
- * @param gestureEnabled when gesture is not enabled value can only be changed by setting [rating]
+ * @param rateChangeMode whether rating change should happen instantly or with an animation
+ * @param gestureMode drag and touch, touch only or no gesture is used to change rating
  * @param shimmer shimmer effect for having a glow
  * @param itemCount maximum number of items
  * @param space space between rating items in dp
  * @param ratingInterval interval of rating. [RatingInterval.Full] returns integer values,
  * [RatingInterval.Half] returns multiples of 0.5, and [RatingInterval.Unconstrained] returns
  * current value without any limitation up to [itemSize]
- * @param allowZeroRating when true [RatingInterval.Full] or [RatingInterval.Half] allowys
+ * @param allowZeroRating when true [RatingInterval.Full] or [RatingInterval.Half] allows
  * user to set value zero
  * @param onRatingChange callback to notify user when rating has changed. This is helpful
  * for getting change after tap or drag gesture
@@ -163,14 +163,14 @@ fun RatingBar(
  * @param tintEmpty color for background and foreground items
  * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
  * or vector file by default
- * @param animationEnabled when animation is enabled tap on any value is animated
- * @param gestureEnabled when gesture is not enabled value can only be changed by setting [rating]
+ * @param rateChangeMode whether rating change should happen instantly or with an animation
+ * @param gestureMode drag and touch, touch only or no gesture is used to change rating
  * @param shimmer shimmer effect for having a glow
  * @param itemCount maximum number of items
  * @param space space between rating items in dp
  * [RatingInterval.Half] returns multiples of 0.5, and [RatingInterval.Unconstrained] returns
  * current value without any limitation up to [itemSize]
- * @param allowZeroRating when true [RatingInterval.Full] or [RatingInterval.Half] allowys
+ * @param allowZeroRating when true [RatingInterval.Full] or [RatingInterval.Half] allows
  * user to set value zero
  * @param onRatingChange callback to notify user when rating has changed. This is helpful
  * for getting change after tap or drag gesture
@@ -264,14 +264,14 @@ fun RatingBar(
  * @param tintEmpty color for background and foreground items
  * @param itemSize size of the rating item to be displayed. This is intrinsic size of image
  * or vector file by default
- * @param animationEnabled when animation is enabled tap on any value is animated
- * @param gestureEnabled when gesture is not enabled value can only be changed by setting [rating]
+ * @param rateChangeMode whether rating change should happen instantly or with an animation
+ * @param gestureMode drag and touch, touch only or no gesture is used to change rating
  * @param shimmer shimmer effect for having a glow
  * @param itemCount maximum number of items
  * @param space space between rating items in dp
  * [RatingInterval.Half] returns multiples of 0.5, and [RatingInterval.Unconstrained] returns
  * current value without any limitation up to [itemSize]
- * @param allowZeroRating when true [RatingInterval.Full] or [RatingInterval.Half] allowys
+ * @param allowZeroRating when true [RatingInterval.Full] or [RatingInterval.Half] allows
  * user to set value zero
  * @param onRatingChange callback to notify user when rating has changed. This is helpful
  * for getting change after tap or drag gesture
