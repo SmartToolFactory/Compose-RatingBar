@@ -59,7 +59,10 @@ fun RatingbarDemo() {
         val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
         val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp, vertical = 16.dp)
+        ) {
 
             Text(
                 modifier = Modifier.padding(vertical = 8.dp),
@@ -149,6 +152,13 @@ fun RatingbarDemo() {
                 color = MaterialTheme.colorScheme.primary
             )
 
+            Text(
+                modifier = Modifier.padding(vertical = 8.dp),
+                text = "RatingBar Properties",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary
+            )
             RatingBar(
                 rating = rating3,
                 painterEmpty = painterResource(id = R.drawable.star_background),
@@ -230,7 +240,7 @@ fun RatingbarDemo() {
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
                 tintFilled = DefaultColor
-            ){
+            ) {
 
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -242,7 +252,7 @@ fun RatingbarDemo() {
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
                 shimmer = Shimmer()
-            ){}
+            ) {}
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -259,7 +269,7 @@ fun RatingbarDemo() {
                     ),
                     drawBorder = true
                 )
-            ){}
+            ) {}
         }
     }
 }
