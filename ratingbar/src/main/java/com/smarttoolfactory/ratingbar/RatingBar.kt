@@ -1,6 +1,7 @@
 package com.smarttoolfactory.ratingbar
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -438,9 +439,10 @@ private fun RatingBarImpl(
                             allowZeroRating = allowZeroRating
                         )
 
+                        onRatingChange.invoke(newRating)
+
                         coroutineScope.launch {
                             animatableRating.snapTo(newRating)
-                            onRatingChange.invoke(newRating)
                         }
 
                     },
@@ -464,6 +466,9 @@ private fun RatingBarImpl(
                         allowZeroRating = allowZeroRating
                     )
 
+                    onRatingChange.invoke(newRating)
+                    onRatingChangeFinished?.invoke(newRating)
+
                     coroutineScope.launch {
                         if (animationEnabled) {
                             animatableRating.animateTo(
@@ -473,8 +478,6 @@ private fun RatingBarImpl(
                         } else {
                             animatableRating.snapTo(newRating)
                         }
-                        onRatingChange.invoke(newRating)
-                        onRatingChangeFinished?.invoke(newRating)
                     }
                 }
             }
@@ -769,5 +772,15 @@ private fun DrawScope.drawWithLayer(block: DrawScope.() -> Unit) {
     }
 }
 
+enum class GestureMode {
+    DragAndTouch, Touch, None
+}
+
+sealed class RateChangeMode {
+    data object InstantChange : RateChangeMode()
+    data class AnimatedChange(
+        val animationSpec: AnimationSpec<Float> = tween(300, easing = LinearEasing)
+    ) : RateChangeMode()
+}
 
 val DefaultColor = Color(0xffFFB300)
