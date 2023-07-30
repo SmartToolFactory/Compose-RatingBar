@@ -2,7 +2,6 @@ package com.smarttoolfactory.composeratingbar.demo
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -36,10 +35,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smarttoolfactory.composeratingbar.R
-import com.smarttoolfactory.ratingbar.DefaultColor
-import com.smarttoolfactory.ratingbar.GestureMode
-import com.smarttoolfactory.ratingbar.RateChangeMode
 import com.smarttoolfactory.ratingbar.RatingBar
+import com.smarttoolfactory.ratingbar.model.DefaultColor
+import com.smarttoolfactory.ratingbar.model.GestureStrategy
+import com.smarttoolfactory.ratingbar.model.RateChangeStrategy
 import com.smarttoolfactory.ratingbar.model.RatingInterval
 import com.smarttoolfactory.ratingbar.model.Shimmer
 
@@ -83,7 +82,7 @@ fun RatingbarDemo() {
                 space = 2.dp,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                rateChangeMode = RateChangeMode.AnimatedChange(),
+                rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
                 ratingInterval = RatingInterval.Full,
                 itemSize = 60.dp
             ) {
@@ -135,7 +134,7 @@ fun RatingbarDemo() {
                 space = 2.dp,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                rateChangeMode = RateChangeMode.InstantChange,
+                rateChangeStrategy = RateChangeStrategy.InstantChange,
                 itemSize = 60.dp
             ) {
                 rating2 = it
@@ -147,7 +146,7 @@ fun RatingbarDemo() {
                 space = 2.dp,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                rateChangeMode = RateChangeMode.AnimatedChange(),
+                rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
                 itemSize = 60.dp
             ) {
                 rating2 = it
@@ -159,10 +158,10 @@ fun RatingbarDemo() {
                 space = 2.dp,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                rateChangeMode = RateChangeMode.AnimatedChange(
+                rateChangeStrategy = RateChangeStrategy.AnimatedChange(
                     animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioHighBouncy,
-                        stiffness = Spring.StiffnessLow
+                        dampingRatio = 0.3f,
+                        stiffness = 300f
                     )
                 ),
                 itemSize = 60.dp
@@ -196,7 +195,7 @@ fun RatingbarDemo() {
                 rating = rating3,
                 painterEmpty = painterResource(id = R.drawable.star_background),
                 painterFilled = painterResource(id = R.drawable.star_foreground),
-                gestureMode = GestureMode.DragAndTouch,
+                gestureStrategy = GestureStrategy.DragAndPress,
                 tintEmpty = Color(0xff795548),
                 tintFilled = Color(0xff795548),
                 itemSize = 60.dp
@@ -209,7 +208,7 @@ fun RatingbarDemo() {
                 rating = rating3,
                 painterEmpty = painterResource(id = R.drawable.star_background),
                 painterFilled = painterResource(id = R.drawable.star_foreground),
-                gestureMode = GestureMode.Touch,
+                gestureStrategy = GestureStrategy.Press,
                 tintEmpty = Color(0xff795548),
                 tintFilled = Color(0xff795548),
                 itemSize = 60.dp
@@ -222,7 +221,7 @@ fun RatingbarDemo() {
                 rating = rating3,
                 painterEmpty = painterResource(id = R.drawable.star_background),
                 painterFilled = painterResource(id = R.drawable.star_foreground),
-                gestureMode = GestureMode.None,
+                gestureStrategy = GestureStrategy.None,
                 tintEmpty = Color(0xff795548),
                 tintFilled = Color(0xff795548),
                 itemSize = 60.dp
