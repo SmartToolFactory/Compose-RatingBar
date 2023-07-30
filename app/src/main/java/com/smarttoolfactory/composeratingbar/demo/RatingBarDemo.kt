@@ -57,385 +57,429 @@ fun RatingbarDemo() {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        var rating by remember { mutableStateOf(3.7f) }
-        var rating2 by remember { mutableStateOf(3.7f) }
-        var rating3 by remember { mutableStateOf(2.3f) }
-        var rating4 by remember { mutableStateOf(4.5f) }
-        var rating5 by remember { mutableStateOf(1.7f) }
-        var rating6 by remember { mutableStateOf(5f) }
-
-        val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
-        val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
-
-        val painterBackground = painterResource(id = R.drawable.star_background)
-        val painterForeground     = painterResource(id = R.drawable.star_foreground)
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp, vertical = 16.dp)
         ) {
-
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = "Rating Intervals",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.secondary
-            )
-            Text(text = "Full")
-            RatingBar(
-                rating = rating,
-                space = 2.dp,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
-                rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
-                ratingInterval = RatingInterval.Full,
-                itemSize = 40.dp
-            ) {
-                rating = it
-            }
-            Text(text = "Half")
-            RatingBar(
-                rating = rating,
-                space = 2.dp,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
-                ratingInterval = RatingInterval.Half,
-                itemSize = 40.dp
-            ) {
-                rating = it
-            }
-            Text(text = "Unconstrained")
-            RatingBar(
-                rating = rating,
-                space = 2.dp,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
-                ratingInterval = RatingInterval.Unconstrained,
-                itemSize = 40.dp
-            ) {
-                rating = it
-            }
-
-            Text(
-                "Rating: $rating",
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Slider(value = rating, onValueChange = { rating = it }, valueRange = 0f..5f)
-
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = "Rate Change Modes",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.secondary
-            )
-
-            Text(text = "InstantChange")
-
-            RatingBar(
-                rating = rating2,
-                space = 2.dp,
-                painterEmpty = painterBackground,
-                painterFilled = painterForeground,
-                rateChangeStrategy = RateChangeStrategy.InstantChange,
-                itemSize = 40.dp
-            ) {
-                rating2 = it
-            }
-
-            Text(text = "LinearEasing")
-            RatingBar(
-                rating = rating2,
-                space = 2.dp,
-                painterEmpty = painterBackground,
-                painterFilled = painterForeground,
-                rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
-                itemSize = 40.dp
-            ) {
-                rating2 = it
-            }
-
-            Text(text = "spring")
-            RatingBar(
-                rating = rating2,
-                space = 2.dp,
-                painterEmpty = painterBackground,
-                painterFilled = painterForeground,
-                rateChangeStrategy = RateChangeStrategy.AnimatedChange(
-                    animationSpec = spring(
-                        dampingRatio = 0.3f,
-                        stiffness = 300f
-                    )
-                ),
-                itemSize = 40.dp
-            ) {
-                rating2 = it
-            }
-
-
-            Slider(
-                value = rating2,
-                onValueChange = { rating2 = it },
-                valueRange = 0f..5f
-            )
-
-            Text(
-                "Rating: $rating2",
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = "Gesture Modes",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.secondary
-            )
-
-            Text(text = "DragAndTouch")
-            RatingBar(
-                rating = rating3,
-                painterEmpty = painterResource(id = R.drawable.star_background),
-                painterFilled = painterResource(id = R.drawable.star_foreground),
-                gestureStrategy = GestureStrategy.DragAndPress,
-                tintEmpty = Color(0xff795548),
-                tintFilled = Color(0xff795548),
-                itemSize = 40.dp
-            ) {
-                rating3 = it
-            }
-
-
-
-            Text(text = "Touch")
-            RatingBar(
-                rating = rating3,
-                painterEmpty = painterResource(id = R.drawable.star_background),
-                painterFilled = painterResource(id = R.drawable.star_foreground),
-                gestureStrategy = GestureStrategy.Press,
-                tintEmpty = Color(0xff795548),
-                tintFilled = Color(0xff795548),
-                itemSize = 40.dp
-            ) {
-                rating3 = it
-            }
-
-            Text(text = "None")
-            RatingBar(
-                rating = rating3,
-                painterEmpty = painterResource(id = R.drawable.star_background),
-                painterFilled = painterResource(id = R.drawable.star_foreground),
-                gestureStrategy = GestureStrategy.None,
-                tintEmpty = Color(0xff795548),
-                tintFilled = Color(0xff795548),
-                itemSize = 40.dp
-            ) {
-                rating3 = it
-            }
-
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = "Color, Shape and Shimmer",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.secondary
-            )
-
-            Text(text = "ImageBitmap")
-
-            RatingBar(
-                rating = 3.2f,
-                itemCount = 5,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
-                tintFilled = DefaultColor
-            ) {
-
-            }
-
-            Text(text = "ImageVector")
-
-            RatingBar(
-                rating = rating4,
-                space = 2.dp,
-                imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.outline_wb_cloudy_24),
-                imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_wb_cloudy_24),
-                tintEmpty = Color(0xff2196F3),
-                tintFilled = Color(0xff4FC3F7),
-                itemSize = 60.dp
-            ) {
-                rating4 = it
-            }
-
-            RatingBar(
-                rating = rating5,
-                imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.twotone_person_24),
-                imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_person_24),
-                tintEmpty = Color(0xff795548),
-                tintFilled = Color(0xffA1887F),
-                itemSize = 40.dp
-            ) {
-                rating5 = it
-            }
-
-            RatingBar(
-                rating = rating5,
-                imageVectorEmpty = Icons.Outlined.Notifications,
-                imageVectorFilled = Icons.Filled.Notifications,
-                tintFilled = DefaultColor,
-                itemSize = 40.dp
-            ) {
-                rating5 = it
-            }
-
-            val pink500 = Color(0xffE91E63)
-
-            val pinkColors = remember {
-                listOf(
-                    pink500.copy(alpha = .9f),
-                    pink500.copy(alpha = .6f),
-                    pink500.copy(alpha = .9f),
-                )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            RatingBar(
-                rating = rating6,
-                space = 14.dp,
-                imageVectorEmpty = Icons.Default.FavoriteBorder,
-                imageVectorFilled = Icons.Default.Favorite,
-                shimmerEffect = ShimmerEffect(
-                    FillShimmer(
-                        colors = pinkColors,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(durationMillis = 2000, easing = LinearEasing),
-                            repeatMode = RepeatMode.Reverse
-                        )
-                    )
-                ),
-                tintEmpty = pink500,
-                tintFilled = pink500,
-                itemSize = 40.dp
-            ) {
-                rating6 = it
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            RatingBar(
-                rating = rating6,
-                space = 2.dp,
-                imageVectorEmpty = Icons.Default.FavoriteBorder,
-                imageVectorFilled = Icons.Default.Favorite,
-                shimmerEffect = ShimmerEffect(
-                    FillShimmer(
-                        colors = pinkColors,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(durationMillis = 2000, easing = LinearEasing),
-                            repeatMode = RepeatMode.Reverse
-                        ),
-                        solidBorder = true
-                    )
-                ),
-                tintEmpty = pink500,
-                tintFilled = pink500,
-                itemSize = 40.dp
-            ) {
-                rating6 = it
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            RatingBar(
-                rating = 1f,
-                space = 2.dp,
-                itemCount = 5,
-                painterEmpty = painterBackground,
-                painterFilled = painterForeground,
-                tintFilled = DefaultColor,
-                shimmerEffect = ShimmerEffect(
-                    fillShimmer = null,
-                    borderShimmer = BorderShimmer(
-                        colors = listOf(
-                            Color.Red,
-                            Color.Green,
-                            Color.Blue
-                        )
-                    )
-                ),
-                itemSize = 60.dp
-            ) {}
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            RatingBar(
-                rating = 1f,
-                space = 2.dp,
-                itemCount = 5,
-                painterEmpty = painterBackground,
-                painterFilled = painterForeground,
-                shimmerEffect = ShimmerEffect(
-                    fillShimmer = FillShimmer(),
-                    borderShimmer = BorderShimmer(
-                        colors = listOf(
-                            Color.Red,
-                            Color.Green,
-                            Color.Blue
-                        )
-                    )
-                ),
-                itemSize = 60.dp
-            ) {}
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            RatingBar(
-                rating = 4.5f,
-                space = 2.dp,
-                itemCount = 10,
-                painterEmpty = painterBackground,
-                painterFilled = painterForeground,
-                shimmerEffect = ShimmerEffect(
-                    fillShimmer = FillShimmer(
-                        colors = listOf(
-                            Color.Red,
-                            Color.Green,
-                            Color.Blue
-                        )
-                    )
-                )
-            ) {}
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            RatingBar(
-                rating = 8.3f,
-                space = 4.dp,
-                itemCount = 10,
-                painterEmpty = painterBackground,
-                painterFilled = painterForeground,
-                shimmerEffect = ShimmerEffect(
-                    fillShimmer = FillShimmer(
-                        colors = listOf(
-                            Color.Red,
-                            Color.Green,
-                            Color.Blue,
-                            Color.Red,
-                            ),
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(durationMillis = 3000, easing = LinearEasing),
-                            repeatMode = RepeatMode.Restart,
-                        ),
-                        solidBorder = true
-                    )
-                )
-            ) {}
+            RatingIntervalsSample()
+            RateChangeSample()
+            GestureStrategySample()
+            ColorAndShapeSample()
+            ShimmerSample()
         }
+    }
+}
+
+@Composable
+fun ShimmerSample() {
+    var rating6 by remember { mutableStateOf(5f) }
+    val painterBackground = painterResource(id = R.drawable.star_background)
+    val painterForeground = painterResource(id = R.drawable.star_foreground)
+
+    Text(
+        modifier = Modifier.padding(vertical = 8.dp),
+        text = "Fill and Border Shimmer",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.secondary
+    )
+
+    val pink500 = Color(0xffE91E63)
+
+    val pinkColors = remember {
+        listOf(
+            pink500.copy(alpha = .9f),
+            pink500.copy(alpha = .6f),
+            pink500.copy(alpha = .9f),
+        )
+    }
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    RatingBar(
+        rating = rating6,
+        space = 14.dp,
+        imageVectorEmpty = Icons.Default.FavoriteBorder,
+        imageVectorFilled = Icons.Default.Favorite,
+        shimmerEffect = ShimmerEffect(
+            FillShimmer(
+                colors = pinkColors,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 2000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
+        ),
+        tintEmpty = pink500,
+        tintFilled = pink500,
+        itemSize = 40.dp
+    ) {
+        rating6 = it
+    }
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    RatingBar(
+        rating = rating6,
+        space = 2.dp,
+        imageVectorEmpty = Icons.Default.FavoriteBorder,
+        imageVectorFilled = Icons.Default.Favorite,
+        shimmerEffect = ShimmerEffect(
+            FillShimmer(
+                colors = pinkColors,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 2000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                solidBorder = true
+            )
+        ),
+        tintEmpty = pink500,
+        tintFilled = pink500,
+        itemSize = 40.dp
+    ) {
+        rating6 = it
+    }
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    RatingBar(
+        rating = 1f,
+        space = 2.dp,
+        itemCount = 5,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        tintFilled = DefaultColor,
+        shimmerEffect = ShimmerEffect(
+            fillShimmer = null,
+            borderShimmer = BorderShimmer(
+                colors = listOf(
+                    Color.Red,
+                    Color.Green,
+                    Color.Blue
+                )
+            )
+        ),
+        itemSize = 60.dp
+    ) {}
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    RatingBar(
+        rating = 1f,
+        space = 2.dp,
+        itemCount = 5,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        shimmerEffect = ShimmerEffect(
+            fillShimmer = FillShimmer(),
+            borderShimmer = BorderShimmer(
+                colors = listOf(
+                    Color.Red,
+                    Color.Green,
+                    Color.Blue
+                )
+            )
+        ),
+        itemSize = 60.dp
+    ) {}
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    RatingBar(
+        rating = 4.5f,
+        space = 2.dp,
+        itemCount = 10,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        shimmerEffect = ShimmerEffect(
+            fillShimmer = FillShimmer(
+                colors = listOf(
+                    Color.Red,
+                    Color.Green,
+                    Color.Blue
+                )
+            )
+        )
+    ) {}
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    RatingBar(
+        rating = 8.3f,
+        space = 4.dp,
+        itemCount = 10,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        shimmerEffect = ShimmerEffect(
+            fillShimmer = FillShimmer(
+                colors = listOf(
+                    Color.Red,
+                    Color.Green,
+                    Color.Blue,
+                    Color.Red,
+                ),
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 3000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart,
+                ),
+                solidBorder = true
+            )
+        )
+    ) {}
+}
+
+@Composable
+private fun RatingIntervalsSample() {
+
+    var rating by remember { mutableStateOf(3.7f) }
+
+    val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
+    val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
+
+
+    Text(
+        modifier = Modifier.padding(vertical = 8.dp),
+        text = "Rating Intervals",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.secondary
+    )
+    Text(text = "Full")
+    RatingBar(
+        rating = rating,
+        space = 2.dp,
+        imageEmpty = imageBackground,
+        imageFilled = imageForeground,
+        rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
+        ratingInterval = RatingInterval.Full,
+        itemSize = 40.dp
+    ) {
+        rating = it
+    }
+    Text(text = "Half")
+    RatingBar(
+        rating = rating,
+        space = 2.dp,
+        imageEmpty = imageBackground,
+        imageFilled = imageForeground,
+        ratingInterval = RatingInterval.Half,
+        itemSize = 40.dp
+    ) {
+        rating = it
+    }
+    Text(text = "Unconstrained")
+    RatingBar(
+        rating = rating,
+        space = 2.dp,
+        imageEmpty = imageBackground,
+        imageFilled = imageForeground,
+        ratingInterval = RatingInterval.Unconstrained,
+        itemSize = 40.dp
+    ) {
+        rating = it
+    }
+
+    Text(
+        "Rating: $rating",
+        fontSize = 16.sp,
+        color = MaterialTheme.colorScheme.primary
+    )
+
+    Slider(value = rating, onValueChange = { rating = it }, valueRange = 0f..5f)
+
+}
+
+@Composable
+private fun RateChangeSample() {
+
+    var rating2 by remember { mutableStateOf(3.7f) }
+
+    val painterBackground = painterResource(id = R.drawable.star_background)
+    val painterForeground = painterResource(id = R.drawable.star_foreground)
+
+
+    Text(
+        modifier = Modifier.padding(vertical = 8.dp),
+        text = "Rate Change Modes",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.secondary
+    )
+
+    Text(text = "InstantChange")
+
+    RatingBar(
+        rating = rating2,
+        space = 2.dp,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        rateChangeStrategy = RateChangeStrategy.InstantChange,
+        itemSize = 40.dp
+    ) {
+        rating2 = it
+    }
+
+    Text(text = "LinearEasing")
+    RatingBar(
+        rating = rating2,
+        space = 2.dp,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
+        itemSize = 40.dp
+    ) {
+        rating2 = it
+    }
+
+    Text(text = "spring")
+    RatingBar(
+        rating = rating2,
+        space = 2.dp,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        rateChangeStrategy = RateChangeStrategy.AnimatedChange(
+            animationSpec = spring(
+                dampingRatio = 0.3f,
+                stiffness = 300f
+            )
+        ),
+        itemSize = 40.dp
+    ) {
+        rating2 = it
+    }
+
+
+    Slider(
+        value = rating2,
+        onValueChange = { rating2 = it },
+        valueRange = 0f..5f
+    )
+
+    Text(
+        "Rating: $rating2",
+        fontSize = 16.sp,
+        color = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
+private fun GestureStrategySample() {
+
+    var rating3 by remember { mutableStateOf(2.3f) }
+
+
+    Text(
+        modifier = Modifier.padding(vertical = 8.dp),
+        text = "Gesture Modes",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.secondary
+    )
+
+    Text(text = "DragAndTouch")
+    RatingBar(
+        rating = rating3,
+        painterEmpty = painterResource(id = R.drawable.star_background),
+        painterFilled = painterResource(id = R.drawable.star_foreground),
+        gestureStrategy = GestureStrategy.DragAndPress,
+        tintEmpty = Color(0xff795548),
+        tintFilled = Color(0xff795548),
+        itemSize = 40.dp
+    ) {
+        rating3 = it
+    }
+
+
+
+    Text(text = "Touch")
+    RatingBar(
+        rating = rating3,
+        painterEmpty = painterResource(id = R.drawable.star_background),
+        painterFilled = painterResource(id = R.drawable.star_foreground),
+        gestureStrategy = GestureStrategy.Press,
+        tintEmpty = Color(0xff795548),
+        tintFilled = Color(0xff795548),
+        itemSize = 40.dp
+    ) {
+        rating3 = it
+    }
+
+    Text(text = "None")
+    RatingBar(
+        rating = rating3,
+        painterEmpty = painterResource(id = R.drawable.star_background),
+        painterFilled = painterResource(id = R.drawable.star_foreground),
+        gestureStrategy = GestureStrategy.None,
+        tintEmpty = Color(0xff795548),
+        tintFilled = Color(0xff795548),
+        itemSize = 40.dp
+    ) {
+        rating3 = it
+    }
+}
+
+@Composable
+private fun ColorAndShapeSample() {
+    var rating4 by remember { mutableStateOf(4.5f) }
+    var rating5 by remember { mutableStateOf(1.7f) }
+    val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
+    val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
+
+
+    Text(
+        modifier = Modifier.padding(vertical = 8.dp),
+        text = "Color and Shape",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.secondary
+    )
+
+    Text(text = "ImageBitmap")
+
+    RatingBar(
+        rating = 3.2f,
+        itemCount = 5,
+        imageEmpty = imageBackground,
+        imageFilled = imageForeground,
+        tintFilled = DefaultColor
+    ) {
+
+    }
+
+    Text(text = "ImageVector")
+
+    RatingBar(
+        rating = rating4,
+        space = 2.dp,
+        imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.outline_wb_cloudy_24),
+        imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_wb_cloudy_24),
+        tintEmpty = Color(0xff2196F3),
+        tintFilled = Color(0xff4FC3F7),
+        itemSize = 60.dp
+    ) {
+        rating4 = it
+    }
+
+    RatingBar(
+        rating = rating5,
+        imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.twotone_person_24),
+        imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_person_24),
+        tintEmpty = Color(0xff795548),
+        tintFilled = Color(0xffA1887F),
+        itemSize = 40.dp
+    ) {
+        rating5 = it
+    }
+
+    RatingBar(
+        rating = rating5,
+        imageVectorEmpty = Icons.Outlined.Notifications,
+        imageVectorFilled = Icons.Filled.Notifications,
+        tintFilled = DefaultColor,
+        itemSize = 40.dp
+    ) {
+        rating5 = it
     }
 }
