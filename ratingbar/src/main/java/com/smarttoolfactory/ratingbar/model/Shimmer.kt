@@ -7,7 +7,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import com.smarttoolfactory.ratingbar.DefaultColor
 
 @Immutable
 internal data class ShimmerData(
