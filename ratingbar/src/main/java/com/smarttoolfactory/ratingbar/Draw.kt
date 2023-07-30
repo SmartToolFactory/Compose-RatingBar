@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.IntSize
 import com.smarttoolfactory.ratingbar.model.ShimmerData
 
+
 internal fun DrawScope.drawRatingPainters(
     rating: Float,
     itemCount: Int,
@@ -25,27 +26,33 @@ internal fun DrawScope.drawRatingPainters(
     space: Float
 ) {
 
-    val imageWidth = size.height
+    // Width of single rating item
+    val itemWidth = size.height
+    // Height of single rating item
+    val itemHeight = size.height
+
     val ratingInt = rating.toInt()
 
-    // End of rating bar
-    val startOfEmptyItems = imageWidth * itemCount + space * (itemCount - 1)
+    // Width of rating bar with items and spaces combined
+    val ratingBarWidth = itemWidth * itemCount + space * (itemCount - 1)
+    // Height of the ratingbar
+    val ratingBarHeight = size.height
     // Start of empty rating items
-    val endOfFilledItems = rating * imageWidth + ratingInt * space
+    val endOfFilledItems = rating * itemWidth + ratingInt * space
     // Rectangle width that covers empty items
-    val rectWidth = startOfEmptyItems - endOfFilledItems
+    val rectWidth = ratingBarWidth - endOfFilledItems
 
     drawWithLayer {
 
         // Draw foreground rating items
         for (i in 0 until itemCount) {
-            val start = imageWidth * i + space * i
+            val start = itemWidth * i + space * i
 
             // Destination
             translate(left = start, top = 0f) {
                 with(painterFilled) {
                     draw(
-                        size = Size(size.height, size.height),
+                        size = Size(itemWidth, itemHeight),
                         colorFilter = colorFilterFilled
                     )
                 }
@@ -56,16 +63,16 @@ internal fun DrawScope.drawRatingPainters(
         drawRect(
             Color.Transparent,
             topLeft = Offset(endOfFilledItems, 0f),
-            size = Size(rectWidth, height = size.height),
+            size = Size(rectWidth, height = ratingBarHeight),
             blendMode = BlendMode.SrcIn
         )
 
         for (i in 0 until itemCount) {
 
-            translate(left = (imageWidth * i + space * i), top = 0f) {
+            translate(left = (itemWidth * i + space * i), top = 0f) {
                 with(painterEmpty) {
                     draw(
-                        size = Size(size.height, size.height),
+                        size = Size(itemWidth, itemHeight),
                         colorFilter = ColorFilter.tint(
                             tintEmpty ?: Color.Transparent,
                             blendMode = BlendMode.SrcIn
@@ -82,22 +89,22 @@ internal fun DrawScope.drawRatingPainters(
                 brush = Brush.linearGradient(
                     shimmerData.fillColors,
                     start = Offset(
-                        x = endOfFilledItems * progress - imageWidth,
-                        y = endOfFilledItems * progress - imageWidth
+                        x = endOfFilledItems * progress - itemWidth,
+                        y = endOfFilledItems * progress - itemWidth
                     ),
                     end = Offset(endOfFilledItems * progress, endOfFilledItems * progress)
                 ),
-                size = Size(endOfFilledItems, size.height),
+                size = Size(endOfFilledItems, ratingBarHeight),
                 blendMode = BlendMode.SrcIn
             )
 
-            if (shimmerData.drawBorder) {
+            if (shimmerData.drawBorder && shimmerData.borderColors.isNullOrEmpty()) {
                 for (i in 0 until itemCount) {
 
-                    translate(left = (imageWidth * i + space * i), top = 0f) {
+                    translate(left = (itemWidth * i + space * i), top = 0f) {
                         with(painterEmpty) {
                             draw(
-                                size = Size(size.height, size.height),
+                                size = Size(itemWidth, itemHeight),
                                 colorFilter = ColorFilter.tint(
                                     tintEmpty ?: Color.Transparent,
                                     blendMode = BlendMode.SrcIn
@@ -105,6 +112,45 @@ internal fun DrawScope.drawRatingPainters(
                             )
                         }
                     }
+                }
+            }
+        }
+    }
+
+    shimmerData?.let {
+
+        drawWithLayer {
+            val progress = shimmerData.progress
+
+            if (shimmerData.drawBorder) {
+                for (i in 0 until itemCount) {
+
+                    translate(left = (itemWidth * i + space * i), top = 0f) {
+                        with(painterEmpty) {
+                            draw(
+                                size = Size(itemWidth, itemHeight),
+                                colorFilter = ColorFilter.tint(
+                                    tintEmpty ?: Color.Transparent,
+                                    blendMode = BlendMode.SrcIn
+                                )
+                            )
+                        }
+                    }
+                }
+
+                shimmerData.borderColors?.let {
+                    drawRect(
+                        brush = Brush.linearGradient(
+                            shimmerData.borderColors,
+                            start = Offset(
+                                x = ratingBarWidth * progress - itemWidth,
+                                y = ratingBarWidth * progress - itemWidth
+                            ),
+                            end = Offset(ratingBarWidth * progress, endOfFilledItems * progress)
+                        ),
+                        size = Size(ratingBarWidth, ratingBarHeight),
+                        blendMode = BlendMode.SrcIn
+                    )
                 }
             }
         }
@@ -204,38 +250,34 @@ internal fun DrawScope.drawRatingImages(
         }
     }
 
-    drawWithLayer {
-
-        shimmerData?.let {
-
+    if (shimmerData?.drawBorder != null) {
+        drawWithLayer {
             val progress = shimmerData.progress
 
-            if (shimmerData.drawBorder) {
-                for (i in 0 until itemCount) {
+            for (i in 0 until itemCount) {
 
-                    translate(left = (itemWidth * i + space * i), top = 0f) {
-                        drawImage(
-                            image = imageEmpty,
-                            dstSize = IntSize(itemWidth.toInt(), itemHeight.toInt()),
-                            colorFilter = colorFilterEmpty
-                        )
-                    }
-                }
-
-                shimmerData.borderColors?.let {
-                    drawRect(
-                        brush = Brush.linearGradient(
-                            shimmerData.borderColors,
-                            start = Offset(
-                                x = ratingBarWidth * progress - itemWidth,
-                                y = ratingBarWidth * progress - itemWidth
-                            ),
-                            end = Offset(ratingBarWidth * progress, endOfFilledItems * progress)
-                        ),
-                        size = Size(ratingBarWidth, ratingBarHeight),
-                        blendMode = BlendMode.SrcIn
+                translate(left = (itemWidth * i + space * i), top = 0f) {
+                    drawImage(
+                        image = imageEmpty,
+                        dstSize = IntSize(itemWidth.toInt(), itemHeight.toInt()),
+                        colorFilter = colorFilterEmpty
                     )
                 }
+            }
+
+            shimmerData.borderColors?.let {
+                drawRect(
+                    brush = Brush.linearGradient(
+                        shimmerData.borderColors,
+                        start = Offset(
+                            x = ratingBarWidth * progress - itemWidth,
+                            y = ratingBarWidth * progress - itemWidth
+                        ),
+                        end = Offset(ratingBarWidth * progress, endOfFilledItems * progress)
+                    ),
+                    size = Size(ratingBarWidth, ratingBarHeight),
+                    blendMode = BlendMode.SrcIn
+                )
             }
         }
     }
