@@ -97,6 +97,8 @@ fun ShimmerSample() {
 
     Spacer(modifier = Modifier.height(10.dp))
 
+    Text(text = "FillShimmer with solidBorder = false")
+
     RatingBar(
         rating = rating6,
         space = 14.dp,
@@ -119,6 +121,8 @@ fun ShimmerSample() {
     }
 
     Spacer(modifier = Modifier.height(10.dp))
+
+    Text(text = "FillShimmer with solidBorder = true")
 
     RatingBar(
         rating = rating6,
@@ -144,13 +148,36 @@ fun ShimmerSample() {
 
     Spacer(modifier = Modifier.height(10.dp))
 
+    Text(text = "FillShimmer with solidBorder = true")
+
     RatingBar(
-        rating = 1f,
+        rating = 4.2f,
         space = 2.dp,
         itemCount = 5,
         painterEmpty = painterBackground,
         painterFilled = painterForeground,
-        tintFilled = DefaultColor,
+        shimmerEffect = ShimmerEffect(
+            FillShimmer(
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 3000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
+                ),
+                solidBorder = true
+            )
+        ),
+        itemSize = 60.dp
+    ) {}
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    Text(text = "BorderShimmer")
+
+    RatingBar(
+        rating = 4.2f,
+        space = 2.dp,
+        itemCount = 5,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
         shimmerEffect = ShimmerEffect(
             fillShimmer = null,
             borderShimmer = BorderShimmer(
@@ -166,8 +193,10 @@ fun ShimmerSample() {
 
     Spacer(modifier = Modifier.height(10.dp))
 
+    Text(text = "FillShimmer and BorderShimmer")
+
     RatingBar(
-        rating = 1f,
+        rating = 4.2f,
         space = 2.dp,
         itemCount = 5,
         painterEmpty = painterBackground,
@@ -193,6 +222,7 @@ fun ShimmerSample() {
         itemCount = 10,
         painterEmpty = painterBackground,
         painterFilled = painterForeground,
+        tintEmpty = Color.Cyan,
         shimmerEffect = ShimmerEffect(
             fillShimmer = FillShimmer(
                 colors = listOf(
@@ -212,6 +242,7 @@ fun ShimmerSample() {
         itemCount = 10,
         painterEmpty = painterBackground,
         painterFilled = painterForeground,
+        tintEmpty = Color.Cyan,
         shimmerEffect = ShimmerEffect(
             fillShimmer = FillShimmer(
                 colors = listOf(
@@ -477,6 +508,7 @@ private fun ColorAndShapeSample() {
         rating = rating5,
         imageVectorEmpty = Icons.Outlined.Notifications,
         imageVectorFilled = Icons.Filled.Notifications,
+        tintEmpty = Color(0xff795DD48),
         tintFilled = DefaultColor,
         itemSize = 40.dp
     ) {

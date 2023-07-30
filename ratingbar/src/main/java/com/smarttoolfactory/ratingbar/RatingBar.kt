@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.smarttoolfactory.ratingbar.model.DefaultColor
 import com.smarttoolfactory.ratingbar.model.GestureStrategy
 import com.smarttoolfactory.ratingbar.model.RateChangeStrategy
 import com.smarttoolfactory.ratingbar.model.RatingInterval
@@ -163,7 +162,7 @@ fun RatingBar(
     rating: Float,
     painterEmpty: Painter,
     painterFilled: Painter,
-    tintEmpty: Color? = DefaultColor,
+    tintEmpty: Color? = null,
     tintFilled: Color? = null,
     itemSize: Dp = Dp.Unspecified,
     rateChangeStrategy: RateChangeStrategy = RateChangeStrategy.AnimatedChange(),
@@ -179,6 +178,12 @@ fun RatingBar(
 
     val painterWidth = painterEmpty.intrinsicSize.width
     val painterHeight = painterEmpty.intrinsicSize.height
+
+    val colorFilterEmpty: ColorFilter? = remember(tintEmpty) {
+        if (tintEmpty != null) {
+            ColorFilter.tint(tintEmpty)
+        } else null
+    }
 
     val colorFilterFilled: ColorFilter? = remember(tintFilled) {
         if (tintFilled != null) {
@@ -221,7 +226,7 @@ fun RatingBar(
                 itemCount,
                 painterEmpty,
                 painterFilled,
-                tintEmpty,
+                colorFilterEmpty,
                 colorFilterFilled,
                 shimmerData,
                 spaceBetween
@@ -264,7 +269,7 @@ fun RatingBar(
     rating: Float,
     imageVectorEmpty: ImageVector,
     imageVectorFilled: ImageVector,
-    tintEmpty: Color? = DefaultColor,
+    tintEmpty: Color? = null,
     tintFilled: Color? = null,
     itemSize: Dp = Dp.Unspecified,
     rateChangeStrategy: RateChangeStrategy = RateChangeStrategy.AnimatedChange(),
@@ -283,6 +288,12 @@ fun RatingBar(
 
     val painterWidth = painterBackground.intrinsicSize.width
     val painterHeight = painterBackground.intrinsicSize.height
+
+    val colorFilterEmpty: ColorFilter? = remember(tintEmpty) {
+        if (tintEmpty != null) {
+            ColorFilter.tint(tintEmpty)
+        } else null
+    }
 
     val colorFilterFilled: ColorFilter? = remember(tintFilled) {
         if (tintFilled != null) {
@@ -325,7 +336,7 @@ fun RatingBar(
                 itemCount,
                 painterBackground,
                 painterForeground,
-                tintEmpty,
+                colorFilterEmpty,
                 colorFilterFilled,
                 shimmerData,
                 spaceBetween

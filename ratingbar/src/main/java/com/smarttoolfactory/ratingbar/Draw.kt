@@ -19,7 +19,7 @@ internal fun DrawScope.drawRatingPainters(
     itemCount: Int,
     painterEmpty: Painter,
     painterFilled: Painter,
-    tintEmpty: Color?,
+    colorFilterEmpty: ColorFilter?,
     colorFilterFilled: ColorFilter?,
     shimmerData: ShimmerData?,
     space: Float
@@ -72,10 +72,7 @@ internal fun DrawScope.drawRatingPainters(
                 with(painterEmpty) {
                     draw(
                         size = Size(itemWidth, itemHeight),
-                        colorFilter = ColorFilter.tint(
-                            tintEmpty ?: Color.Transparent,
-                            blendMode = BlendMode.SrcIn
-                        )
+                        colorFilter = colorFilterEmpty
                     )
                 }
             }
@@ -84,7 +81,7 @@ internal fun DrawScope.drawRatingPainters(
         // Filled Shimmer Effect
         shimmerData?.run {
 
-            if (fillProgress != null && !fillColors.isNullOrEmpty()){
+            if (fillProgress != null && !fillColors.isNullOrEmpty()) {
 
                 val progress = fillProgress
 
@@ -102,18 +99,14 @@ internal fun DrawScope.drawRatingPainters(
                 )
             }
 
-
-            if (solidBorderOverFill ) {
+            if (solidBorderOverFill) {
                 for (i in 0 until itemCount) {
 
                     translate(left = (itemWidth * i + space * i), top = 0f) {
                         with(painterEmpty) {
                             draw(
                                 size = Size(itemWidth, itemHeight),
-                                colorFilter = ColorFilter.tint(
-                                    tintEmpty ?: Color.Transparent,
-                                    blendMode = BlendMode.SrcIn
-                                )
+                                colorFilter = colorFilterEmpty
                             )
                         }
                     }
@@ -127,7 +120,7 @@ internal fun DrawScope.drawRatingPainters(
     shimmerData?.run {
         val progress = borderProgress
 
-        if (progress != null && !borderColors.isNullOrEmpty()){
+        if (progress != null && !borderColors.isNullOrEmpty()) {
             drawWithLayer {
 
                 for (i in 0 until itemCount) {
@@ -136,10 +129,7 @@ internal fun DrawScope.drawRatingPainters(
                         with(painterEmpty) {
                             draw(
                                 size = Size(itemWidth, itemHeight),
-                                colorFilter = ColorFilter.tint(
-                                    tintEmpty ?: Color.Transparent,
-                                    blendMode = BlendMode.SrcIn
-                                )
+                                colorFilter = colorFilterEmpty
                             )
                         }
                     }
@@ -152,7 +142,7 @@ internal fun DrawScope.drawRatingPainters(
                             x = ratingBarWidth * progress - itemWidth,
                             y = ratingBarWidth * progress - itemWidth
                         ),
-                        end = Offset(ratingBarWidth * progress, endOfFilledItems * progress)
+                        end = Offset(ratingBarWidth * progress, ratingBarWidth * progress)
                     ),
                     size = Size(ratingBarWidth, ratingBarHeight),
                     blendMode = BlendMode.SrcIn
@@ -227,7 +217,7 @@ internal fun DrawScope.drawRatingImages(
         // Filled Shimmer Effect
         shimmerData?.run {
 
-            if (fillProgress != null && !fillColors.isNullOrEmpty()){
+            if (fillProgress != null && !fillColors.isNullOrEmpty()) {
 
                 val progress = fillProgress
 
@@ -245,8 +235,7 @@ internal fun DrawScope.drawRatingImages(
                 )
             }
 
-
-            if (solidBorderOverFill ) {
+            if (solidBorderOverFill) {
                 for (i in 0 until itemCount) {
 
                     translate(left = (itemWidth * i + space * i), top = 0f) {
@@ -261,12 +250,11 @@ internal fun DrawScope.drawRatingImages(
         }
     }
 
-
     // Border Shimmer Effect
     shimmerData?.run {
         val progress = borderProgress
 
-        if (progress != null && !borderColors.isNullOrEmpty()){
+        if (progress != null && !borderColors.isNullOrEmpty()) {
             drawWithLayer {
 
                 for (i in 0 until itemCount) {
@@ -287,7 +275,7 @@ internal fun DrawScope.drawRatingImages(
                             x = ratingBarWidth * progress - itemWidth,
                             y = ratingBarWidth * progress - itemWidth
                         ),
-                        end = Offset(ratingBarWidth * progress, endOfFilledItems * progress)
+                        end = Offset(ratingBarWidth * progress, ratingBarWidth * progress)
                     ),
                     size = Size(ratingBarWidth, ratingBarHeight),
                     blendMode = BlendMode.SrcIn
