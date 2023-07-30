@@ -67,6 +67,9 @@ fun RatingbarDemo() {
         val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
         val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
 
+        val painterBackground = painterResource(id = R.drawable.star_background)
+        val painterForeground     = painterResource(id = R.drawable.star_foreground)
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -136,8 +139,8 @@ fun RatingbarDemo() {
             RatingBar(
                 rating = rating2,
                 space = 2.dp,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
+                painterEmpty = painterBackground,
+                painterFilled = painterForeground,
                 rateChangeStrategy = RateChangeStrategy.InstantChange,
                 itemSize = 40.dp
             ) {
@@ -148,8 +151,8 @@ fun RatingbarDemo() {
             RatingBar(
                 rating = rating2,
                 space = 2.dp,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
+                painterEmpty = painterBackground,
+                painterFilled = painterForeground,
                 rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
                 itemSize = 40.dp
             ) {
@@ -160,8 +163,8 @@ fun RatingbarDemo() {
             RatingBar(
                 rating = rating2,
                 space = 2.dp,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
+                painterEmpty = painterBackground,
+                painterFilled = painterForeground,
                 rateChangeStrategy = RateChangeStrategy.AnimatedChange(
                     animationSpec = spring(
                         dampingRatio = 0.3f,
@@ -353,8 +356,8 @@ fun RatingbarDemo() {
                 rating = 1f,
                 space = 2.dp,
                 itemCount = 5,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
+                painterEmpty = painterBackground,
+                painterFilled = painterForeground,
                 tintFilled = DefaultColor,
                 shimmerEffect = ShimmerEffect(
                     fillShimmer = null,
@@ -375,8 +378,8 @@ fun RatingbarDemo() {
                 rating = 1f,
                 space = 2.dp,
                 itemCount = 5,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
+                painterEmpty = painterBackground,
+                painterFilled = painterForeground,
                 shimmerEffect = ShimmerEffect(
                     fillShimmer = FillShimmer(),
                     borderShimmer = BorderShimmer(
@@ -396,9 +399,17 @@ fun RatingbarDemo() {
                 rating = 4.5f,
                 space = 2.dp,
                 itemCount = 10,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
-                shimmerEffect = ShimmerEffect()
+                painterEmpty = painterBackground,
+                painterFilled = painterForeground,
+                shimmerEffect = ShimmerEffect(
+                    fillShimmer = FillShimmer(
+                        colors = listOf(
+                            Color.Red,
+                            Color.Green,
+                            Color.Blue
+                        )
+                    )
+                )
             ) {}
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -407,10 +418,16 @@ fun RatingbarDemo() {
                 rating = 8.3f,
                 space = 4.dp,
                 itemCount = 10,
-                imageEmpty = imageBackground,
-                imageFilled = imageForeground,
+                painterEmpty = painterBackground,
+                painterFilled = painterForeground,
                 shimmerEffect = ShimmerEffect(
                     fillShimmer = FillShimmer(
+                        colors = listOf(
+                            Color.Red,
+                            Color.Green,
+                            Color.Blue,
+                            Color.Red,
+                            ),
                         animationSpec = infiniteRepeatable(
                             animation = tween(durationMillis = 3000, easing = LinearEasing),
                             repeatMode = RepeatMode.Restart,
