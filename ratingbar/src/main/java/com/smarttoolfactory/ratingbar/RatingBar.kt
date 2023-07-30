@@ -19,8 +19,8 @@ import com.smarttoolfactory.ratingbar.model.DefaultColor
 import com.smarttoolfactory.ratingbar.model.GestureStrategy
 import com.smarttoolfactory.ratingbar.model.RateChangeStrategy
 import com.smarttoolfactory.ratingbar.model.RatingInterval
-import com.smarttoolfactory.ratingbar.model.Shimmer
 import com.smarttoolfactory.ratingbar.model.ShimmerData
+import com.smarttoolfactory.ratingbar.model.ShimmerEffect
 import com.smarttoolfactory.ratingbar.model.getRatingForInterval
 
 /**
@@ -36,7 +36,7 @@ import com.smarttoolfactory.ratingbar.model.getRatingForInterval
  * or vector file by default
  * @param rateChangeStrategy whether rating change should happen instantly or with an animation
  * @param gestureStrategy drag and touch, touch only or no gesture is used to change rating
- * @param shimmer shimmer effect for having a glow
+ * @param shimmerEffect shimmer effect for having a glow
  * @param itemCount maximum number of items
  * @param space space between rating items in dp
  * @param ratingInterval interval of rating. [RatingInterval.Full] returns integer values,
@@ -59,7 +59,7 @@ fun RatingBar(
     itemSize: Dp = Dp.Unspecified,
     rateChangeStrategy: RateChangeStrategy = RateChangeStrategy.AnimatedChange(),
     gestureStrategy: GestureStrategy = GestureStrategy.DragAndPress,
-    shimmer: Shimmer? = null,
+    shimmerEffect: ShimmerEffect? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
     ratingInterval: RatingInterval = RatingInterval.Unconstrained,
@@ -108,10 +108,13 @@ fun RatingBar(
         itemSize = itemSize,
         rateChangeStrategy = rateChangeStrategy,
         gestureStrategy = gestureStrategy,
-        shimmer = shimmer,
+        shimmerEffect = shimmerEffect,
         itemCount = itemCount,
         space = space,
-        block = { updatedRating: Float, spaceBetween: Float, shimmerData: ShimmerData? ->
+        block = {
+                updatedRating: Float,
+                spaceBetween: Float,
+                shimmerData: ShimmerData? ->
             drawRatingImages(
                 rating = updatedRating,
                 itemCount = itemCount,
@@ -143,7 +146,7 @@ fun RatingBar(
  * or vector file by default
  * @param rateChangeStrategy whether rating change should happen instantly or with an animation
  * @param gestureStrategy drag and touch, touch only or no gesture is used to change rating
- * @param shimmer shimmer effect for having a glow
+ * @param shimmerEffect shimmer effect for having a glow
  * @param itemCount maximum number of items
  * @param space space between rating items in dp
  * [RatingInterval.Half] returns multiples of 0.5, and [RatingInterval.Unconstrained] returns
@@ -165,7 +168,7 @@ fun RatingBar(
     itemSize: Dp = Dp.Unspecified,
     rateChangeStrategy: RateChangeStrategy = RateChangeStrategy.AnimatedChange(),
     gestureStrategy: GestureStrategy = GestureStrategy.DragAndPress,
-    shimmer: Shimmer? = null,
+    shimmerEffect: ShimmerEffect? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
     ratingInterval: RatingInterval = RatingInterval.Unconstrained,
@@ -209,7 +212,7 @@ fun RatingBar(
         itemSize = itemSize,
         rateChangeStrategy = rateChangeStrategy,
         gestureStrategy = gestureStrategy,
-        shimmer = shimmer,
+        shimmerEffect = shimmerEffect,
         itemCount = itemCount,
         space = space,
         block = { updatedRating: Float, spaceBetween: Float, shimmerData: ShimmerData? ->
@@ -244,7 +247,7 @@ fun RatingBar(
  * or vector file by default
  * @param rateChangeStrategy whether rating change should happen instantly or with an animation
  * @param gestureStrategy drag and touch, touch only or no gesture is used to change rating
- * @param shimmer shimmer effect for having a glow
+ * @param shimmerEffect shimmer effect for having a glow
  * @param itemCount maximum number of items
  * @param space space between rating items in dp
  * [RatingInterval.Half] returns multiples of 0.5, and [RatingInterval.Unconstrained] returns
@@ -266,7 +269,7 @@ fun RatingBar(
     itemSize: Dp = Dp.Unspecified,
     rateChangeStrategy: RateChangeStrategy = RateChangeStrategy.AnimatedChange(),
     gestureStrategy: GestureStrategy = GestureStrategy.DragAndPress,
-    shimmer: Shimmer? = null,
+    shimmerEffect: ShimmerEffect? = null,
     itemCount: Int = 5,
     space: Dp = 0.dp,
     ratingInterval: RatingInterval = RatingInterval.Unconstrained,
@@ -313,7 +316,7 @@ fun RatingBar(
         itemSize = itemSize,
         rateChangeStrategy = rateChangeStrategy,
         gestureStrategy = gestureStrategy,
-        shimmer = shimmer,
+        shimmerEffect = shimmerEffect,
         itemCount = itemCount,
         space = space,
         block = { updatedRating: Float, spaceBetween: Float, shimmerData: ShimmerData? ->

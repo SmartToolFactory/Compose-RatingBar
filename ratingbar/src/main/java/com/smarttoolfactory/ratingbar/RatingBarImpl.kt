@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.ratingbar.model.GestureStrategy
 import com.smarttoolfactory.ratingbar.model.RateChangeStrategy
 import com.smarttoolfactory.ratingbar.model.RatingInterval
-import com.smarttoolfactory.ratingbar.model.Shimmer
 import com.smarttoolfactory.ratingbar.model.ShimmerData
+import com.smarttoolfactory.ratingbar.model.ShimmerEffect
 import com.smarttoolfactory.ratingbar.model.getRatingForInterval
 import kotlinx.coroutines.launch
 
@@ -39,7 +39,7 @@ internal fun RatingBarImpl(
     intrinsicHeight: Float,
     rateChangeStrategy: RateChangeStrategy = RateChangeStrategy.AnimatedChange(),
     gestureStrategy: GestureStrategy = GestureStrategy.DragAndPress,
-    shimmer: Shimmer?,
+    shimmerEffect: ShimmerEffect?,
     itemCount: Int = 5,
     space: Dp = 0.dp,
     ratingInterval: RatingInterval,
@@ -169,13 +169,25 @@ internal fun RatingBarImpl(
                 }
             )
 
-        val shimmerData: ShimmerData? = shimmer?.let {
-            val progress = getRatingShimmerProgress(shimmer.animationSpec)
+        val shimmerData: ShimmerData? = shimmerEffect?.let {
+
+            val fillShimmer = shimmerEffect.fillShimmer
+            val borderShimmer = shimmerEffect.borderShimmer
+
+            val fillProgress = fillShimmer?.animationSpec?.let {
+                getRatingShimmerProgress(fillShimmer.animationSpec)
+            }
+
+            val borderProgress = borderShimmer?.animationSpec?.let {
+                getRatingShimmerProgress(borderShimmer.animationSpec)
+            }
+
             ShimmerData(
-                fillColors = shimmer.fillColors,
-                progress = progress,
-                drawBorder = shimmer.drawBorder,
-                borderColors = shimmer.borderColors
+                fillProgress = fillProgress,
+                fillColors = fillShimmer?.colors,
+                solidBorderOverFill = fillShimmer?.solidBorder ?: false,
+                borderProgress = borderProgress,
+                borderColors = borderShimmer?.colors
             )
         }
 

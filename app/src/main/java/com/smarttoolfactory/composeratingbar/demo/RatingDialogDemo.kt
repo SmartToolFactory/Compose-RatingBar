@@ -38,8 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.smarttoolfactory.composeratingbar.R
 import com.smarttoolfactory.ratingbar.RatingBar
+import com.smarttoolfactory.ratingbar.model.FillShimmer
 import com.smarttoolfactory.ratingbar.model.RatingInterval
-import com.smarttoolfactory.ratingbar.model.Shimmer
+import com.smarttoolfactory.ratingbar.model.ShimmerEffect
 
 @Preview
 @Composable
@@ -140,14 +141,15 @@ fun RatingDialog(
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
                 ratingInterval = RatingInterval.Half,
-                shimmer = Shimmer(
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 3000, easing = LinearEasing),
-                        repeatMode = RepeatMode.Restart
-                    ),
-                    drawBorder = true
+                shimmerEffect = ShimmerEffect(
+                    FillShimmer(
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 3000, easing = LinearEasing),
+                            repeatMode = RepeatMode.Restart
+                        ),
+                        solidBorder = true
+                    )
                 ),
-                itemSize = 40.dp,
             ) {
                 onRatingChange(it)
             }

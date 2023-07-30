@@ -15,6 +15,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -36,11 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smarttoolfactory.composeratingbar.R
 import com.smarttoolfactory.ratingbar.RatingBar
+import com.smarttoolfactory.ratingbar.model.BorderShimmer
 import com.smarttoolfactory.ratingbar.model.DefaultColor
+import com.smarttoolfactory.ratingbar.model.FillShimmer
 import com.smarttoolfactory.ratingbar.model.GestureStrategy
 import com.smarttoolfactory.ratingbar.model.RateChangeStrategy
 import com.smarttoolfactory.ratingbar.model.RatingInterval
-import com.smarttoolfactory.ratingbar.model.Shimmer
+import com.smarttoolfactory.ratingbar.model.ShimmerEffect
 
 val rateColor = Color(0xffFFA000)
 
@@ -84,7 +88,7 @@ fun RatingbarDemo() {
                 imageFilled = imageForeground,
                 rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
                 ratingInterval = RatingInterval.Full,
-                itemSize = 60.dp
+                itemSize = 40.dp
             ) {
                 rating = it
             }
@@ -95,7 +99,7 @@ fun RatingbarDemo() {
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
                 ratingInterval = RatingInterval.Half,
-                itemSize = 60.dp
+                itemSize = 40.dp
             ) {
                 rating = it
             }
@@ -106,7 +110,7 @@ fun RatingbarDemo() {
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
                 ratingInterval = RatingInterval.Unconstrained,
-                itemSize = 60.dp
+                itemSize = 40.dp
             ) {
                 rating = it
             }
@@ -135,7 +139,7 @@ fun RatingbarDemo() {
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
                 rateChangeStrategy = RateChangeStrategy.InstantChange,
-                itemSize = 60.dp
+                itemSize = 40.dp
             ) {
                 rating2 = it
             }
@@ -147,7 +151,7 @@ fun RatingbarDemo() {
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
                 rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
-                itemSize = 60.dp
+                itemSize = 40.dp
             ) {
                 rating2 = it
             }
@@ -164,7 +168,7 @@ fun RatingbarDemo() {
                         stiffness = 300f
                     )
                 ),
-                itemSize = 60.dp
+                itemSize = 40.dp
             ) {
                 rating2 = it
             }
@@ -198,10 +202,12 @@ fun RatingbarDemo() {
                 gestureStrategy = GestureStrategy.DragAndPress,
                 tintEmpty = Color(0xff795548),
                 tintFilled = Color(0xff795548),
-                itemSize = 60.dp
+                itemSize = 40.dp
             ) {
                 rating3 = it
             }
+
+
 
             Text(text = "Touch")
             RatingBar(
@@ -211,7 +217,7 @@ fun RatingbarDemo() {
                 gestureStrategy = GestureStrategy.Press,
                 tintEmpty = Color(0xff795548),
                 tintFilled = Color(0xff795548),
-                itemSize = 60.dp
+                itemSize = 40.dp
             ) {
                 rating3 = it
             }
@@ -224,7 +230,7 @@ fun RatingbarDemo() {
                 gestureStrategy = GestureStrategy.None,
                 tintEmpty = Color(0xff795548),
                 tintFilled = Color(0xff795548),
-                itemSize = 60.dp
+                itemSize = 40.dp
             ) {
                 rating3 = it
             }
@@ -237,68 +243,7 @@ fun RatingbarDemo() {
                 color = MaterialTheme.colorScheme.secondary
             )
 
-            val pink500 = Color(0xffE91E63)
-            RatingBar(
-                rating = rating4,
-                space = 14.dp,
-                imageVectorEmpty = Icons.Default.FavoriteBorder,
-                imageVectorFilled = Icons.Default.Favorite,
-                shimmer = Shimmer(
-                    color = pink500,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 2000, easing = LinearEasing),
-                        repeatMode = RepeatMode.Reverse
-                    )
-                ),
-                tintEmpty = pink500,
-                tintFilled = pink500,
-                itemSize = 40.dp
-            ) {
-                rating4 = it
-            }
-
-            RatingBar(
-                rating = rating4,
-                space = 2.dp,
-                imageVectorEmpty = Icons.Default.FavoriteBorder,
-                imageVectorFilled = Icons.Default.Favorite,
-                shimmer = Shimmer(
-                    color = pink500,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 2000, easing = LinearEasing),
-                        repeatMode = RepeatMode.Restart
-                    ),
-                    drawBorder = true
-                ),
-                tintEmpty = pink500,
-                tintFilled = pink500,
-                itemSize = 40.dp
-            ) {
-                rating4 = it
-            }
-
-            RatingBar(
-                rating = rating5,
-                space = 2.dp,
-                imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.outline_wb_cloudy_24),
-                imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_wb_cloudy_24),
-                tintEmpty = Color(0xff2196F3),
-                tintFilled = Color(0xff4FC3F7),
-                itemSize = 60.dp
-            ) {
-                rating5 = it
-            }
-
-            RatingBar(
-                rating = rating6,
-                imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.twotone_person_24),
-                imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_person_24),
-                tintEmpty = Color(0xff795548),
-                tintFilled = Color(0xffA1887F),
-                itemSize = 40.dp
-            ) {
-                rating6 = it
-            }
+            Text(text = "ImageBitmap")
 
             RatingBar(
                 rating = 3.2f,
@@ -309,6 +254,142 @@ fun RatingbarDemo() {
             ) {
 
             }
+
+            Text(text = "ImageVector")
+
+            RatingBar(
+                rating = rating4,
+                space = 2.dp,
+                imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.outline_wb_cloudy_24),
+                imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_wb_cloudy_24),
+                tintEmpty = Color(0xff2196F3),
+                tintFilled = Color(0xff4FC3F7),
+                itemSize = 60.dp
+            ) {
+                rating4 = it
+            }
+
+            RatingBar(
+                rating = rating5,
+                imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.twotone_person_24),
+                imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_person_24),
+                tintEmpty = Color(0xff795548),
+                tintFilled = Color(0xffA1887F),
+                itemSize = 40.dp
+            ) {
+                rating5 = it
+            }
+
+            RatingBar(
+                rating = rating5,
+                imageVectorEmpty = Icons.Outlined.Notifications,
+                imageVectorFilled = Icons.Filled.Notifications,
+                tintFilled = DefaultColor,
+                itemSize = 40.dp
+            ) {
+                rating5 = it
+            }
+
+            val pink500 = Color(0xffE91E63)
+
+            val pinkColors = remember {
+                listOf(
+                    pink500.copy(alpha = .9f),
+                    pink500.copy(alpha = .6f),
+                    pink500.copy(alpha = .9f),
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            RatingBar(
+                rating = rating6,
+                space = 14.dp,
+                imageVectorEmpty = Icons.Default.FavoriteBorder,
+                imageVectorFilled = Icons.Default.Favorite,
+                shimmerEffect = ShimmerEffect(
+                    FillShimmer(
+                        colors = pinkColors,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 2000, easing = LinearEasing),
+                            repeatMode = RepeatMode.Reverse
+                        )
+                    )
+                ),
+                tintEmpty = pink500,
+                tintFilled = pink500,
+                itemSize = 40.dp
+            ) {
+                rating6 = it
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            RatingBar(
+                rating = rating6,
+                space = 2.dp,
+                imageVectorEmpty = Icons.Default.FavoriteBorder,
+                imageVectorFilled = Icons.Default.Favorite,
+                shimmerEffect = ShimmerEffect(
+                    FillShimmer(
+                        colors = pinkColors,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 2000, easing = LinearEasing),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        solidBorder = true
+                    )
+                ),
+                tintEmpty = pink500,
+                tintFilled = pink500,
+                itemSize = 40.dp
+            ) {
+                rating6 = it
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            RatingBar(
+                rating = 1f,
+                space = 2.dp,
+                itemCount = 5,
+                imageEmpty = imageBackground,
+                imageFilled = imageForeground,
+                tintFilled = DefaultColor,
+                shimmerEffect = ShimmerEffect(
+                    fillShimmer = null,
+                    borderShimmer = BorderShimmer(
+                        colors = listOf(
+                            Color.Red,
+                            Color.Green,
+                            Color.Blue
+                        )
+                    )
+                ),
+                itemSize = 60.dp
+            ) {}
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            RatingBar(
+                rating = 1f,
+                space = 2.dp,
+                itemCount = 5,
+                imageEmpty = imageBackground,
+                imageFilled = imageForeground,
+                shimmerEffect = ShimmerEffect(
+                    fillShimmer = FillShimmer(),
+                    borderShimmer = BorderShimmer(
+                        colors = listOf(
+                            Color.Red,
+                            Color.Green,
+                            Color.Blue
+                        )
+                    )
+                ),
+                itemSize = 60.dp
+            ) {}
+
             Spacer(modifier = Modifier.height(10.dp))
 
             RatingBar(
@@ -317,7 +398,7 @@ fun RatingbarDemo() {
                 itemCount = 10,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                shimmer = Shimmer()
+                shimmerEffect = ShimmerEffect()
             ) {}
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -328,12 +409,14 @@ fun RatingbarDemo() {
                 itemCount = 10,
                 imageEmpty = imageBackground,
                 imageFilled = imageForeground,
-                shimmer = Shimmer(
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 3000, easing = LinearEasing),
-                        repeatMode = RepeatMode.Restart
-                    ),
-                    drawBorder = true
+                shimmerEffect = ShimmerEffect(
+                    fillShimmer = FillShimmer(
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 3000, easing = LinearEasing),
+                            repeatMode = RepeatMode.Restart,
+                        ),
+                        solidBorder = true
+                    )
                 )
             ) {}
         }

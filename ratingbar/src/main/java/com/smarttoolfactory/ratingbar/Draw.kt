@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.IntSize
 import com.smarttoolfactory.ratingbar.model.ShimmerData
 
-
 internal fun DrawScope.drawRatingPainters(
     rating: Float,
     itemCount: Int,
@@ -82,23 +81,29 @@ internal fun DrawScope.drawRatingPainters(
             }
         }
 
-        shimmerData?.let { shimmerData ->
-            val progress = shimmerData.progress
+        // Filled Shimmer Effect
+        shimmerData?.run {
 
-            drawRect(
-                brush = Brush.linearGradient(
-                    shimmerData.fillColors,
-                    start = Offset(
-                        x = endOfFilledItems * progress - itemWidth,
-                        y = endOfFilledItems * progress - itemWidth
+            if (fillProgress != null && !fillColors.isNullOrEmpty()){
+
+                val progress = fillProgress
+
+                drawRect(
+                    brush = Brush.linearGradient(
+                        colors = fillColors,
+                        start = Offset(
+                            x = endOfFilledItems * progress - itemWidth,
+                            y = endOfFilledItems * progress - itemWidth
+                        ),
+                        end = Offset(endOfFilledItems * progress, endOfFilledItems * progress)
                     ),
-                    end = Offset(endOfFilledItems * progress, endOfFilledItems * progress)
-                ),
-                size = Size(endOfFilledItems, ratingBarHeight),
-                blendMode = BlendMode.SrcIn
-            )
+                    size = Size(endOfFilledItems, ratingBarHeight),
+                    blendMode = BlendMode.SrcIn
+                )
+            }
 
-            if (shimmerData.drawBorder && shimmerData.borderColors.isNullOrEmpty()) {
+
+            if (solidBorderOverFill ) {
                 for (i in 0 until itemCount) {
 
                     translate(left = (itemWidth * i + space * i), top = 0f) {
@@ -117,12 +122,14 @@ internal fun DrawScope.drawRatingPainters(
         }
     }
 
-    shimmerData?.let {
 
-        drawWithLayer {
-            val progress = shimmerData.progress
+    // Border Shimmer Effect
+    shimmerData?.run {
+        val progress = borderProgress
 
-            if (shimmerData.drawBorder) {
+        if (progress != null && !borderColors.isNullOrEmpty()){
+            drawWithLayer {
+
                 for (i in 0 until itemCount) {
 
                     translate(left = (itemWidth * i + space * i), top = 0f) {
@@ -138,20 +145,18 @@ internal fun DrawScope.drawRatingPainters(
                     }
                 }
 
-                shimmerData.borderColors?.let {
-                    drawRect(
-                        brush = Brush.linearGradient(
-                            shimmerData.borderColors,
-                            start = Offset(
-                                x = ratingBarWidth * progress - itemWidth,
-                                y = ratingBarWidth * progress - itemWidth
-                            ),
-                            end = Offset(ratingBarWidth * progress, endOfFilledItems * progress)
+                drawRect(
+                    brush = Brush.linearGradient(
+                        borderColors,
+                        start = Offset(
+                            x = ratingBarWidth * progress - itemWidth,
+                            y = ratingBarWidth * progress - itemWidth
                         ),
-                        size = Size(ratingBarWidth, ratingBarHeight),
-                        blendMode = BlendMode.SrcIn
-                    )
-                }
+                        end = Offset(ratingBarWidth * progress, endOfFilledItems * progress)
+                    ),
+                    size = Size(ratingBarWidth, ratingBarHeight),
+                    blendMode = BlendMode.SrcIn
+                )
             }
         }
     }
@@ -219,23 +224,29 @@ internal fun DrawScope.drawRatingImages(
             }
         }
 
-        shimmerData?.let { shimmerData ->
-            val progress = shimmerData.progress
+        // Filled Shimmer Effect
+        shimmerData?.run {
 
-            drawRect(
-                brush = Brush.linearGradient(
-                    shimmerData.fillColors,
-                    start = Offset(
-                        x = endOfFilledItems * progress - itemWidth,
-                        y = endOfFilledItems * progress - itemWidth
+            if (fillProgress != null && !fillColors.isNullOrEmpty()){
+
+                val progress = fillProgress
+
+                drawRect(
+                    brush = Brush.linearGradient(
+                        colors = fillColors,
+                        start = Offset(
+                            x = endOfFilledItems * progress - itemWidth,
+                            y = endOfFilledItems * progress - itemWidth
+                        ),
+                        end = Offset(endOfFilledItems * progress, endOfFilledItems * progress)
                     ),
-                    end = Offset(endOfFilledItems * progress, endOfFilledItems * progress)
-                ),
-                size = Size(endOfFilledItems, ratingBarHeight),
-                blendMode = BlendMode.SrcIn
-            )
+                    size = Size(endOfFilledItems, ratingBarHeight),
+                    blendMode = BlendMode.SrcIn
+                )
+            }
 
-            if (shimmerData.drawBorder && shimmerData.borderColors.isNullOrEmpty()) {
+
+            if (solidBorderOverFill ) {
                 for (i in 0 until itemCount) {
 
                     translate(left = (itemWidth * i + space * i), top = 0f) {
@@ -250,25 +261,28 @@ internal fun DrawScope.drawRatingImages(
         }
     }
 
-    if (shimmerData?.drawBorder != null) {
-        drawWithLayer {
-            val progress = shimmerData.progress
 
-            for (i in 0 until itemCount) {
+    // Border Shimmer Effect
+    shimmerData?.run {
+        val progress = borderProgress
 
-                translate(left = (itemWidth * i + space * i), top = 0f) {
-                    drawImage(
-                        image = imageEmpty,
-                        dstSize = IntSize(itemWidth.toInt(), itemHeight.toInt()),
-                        colorFilter = colorFilterEmpty
-                    )
+        if (progress != null && !borderColors.isNullOrEmpty()){
+            drawWithLayer {
+
+                for (i in 0 until itemCount) {
+
+                    translate(left = (itemWidth * i + space * i), top = 0f) {
+                        drawImage(
+                            image = imageEmpty,
+                            dstSize = IntSize(itemWidth.toInt(), itemHeight.toInt()),
+                            colorFilter = colorFilterEmpty
+                        )
+                    }
                 }
-            }
 
-            shimmerData.borderColors?.let {
                 drawRect(
                     brush = Brush.linearGradient(
-                        shimmerData.borderColors,
+                        borderColors,
                         start = Offset(
                             x = ratingBarWidth * progress - itemWidth,
                             y = ratingBarWidth * progress - itemWidth
