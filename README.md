@@ -41,14 +41,14 @@ dependencies {
 fun RatingBar(
   modifier: Modifier = Modifier,
   rating: Float,
-  painterEmpty: Painter,
-  painterFilled: Painter,
-  tintEmpty: Color? = DefaultColor,
+  imageEmpty: ImageBitmap,
+  imageFilled: ImageBitmap,
+  tintEmpty: Color? = null,
   tintFilled: Color? = null,
   itemSize: Dp = Dp.Unspecified,
-  rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
-  gestureMode: GestureMode = GestureMode.DragAndTouch,
-  shimmer: Shimmer? = null,
+  rateChangeStrategy: RateChangeStrategy = RateChangeStrategy.AnimatedChange(),
+  gestureStrategy: GestureStrategy = GestureStrategy.DragAndPress,
+  shimmerEffect: ShimmerEffect? = null,
   itemCount: Int = 5,
   space: Dp = 0.dp,
   ratingInterval: RatingInterval = RatingInterval.Unconstrained,
@@ -63,21 +63,21 @@ fun RatingBar(
 fun RatingBar(
   modifier: Modifier = Modifier,
   rating: Float,
-  imageEmpty: ImageBitmap,
-  imageFilled: ImageBitmap,
+  painterEmpty: Painter,
+  painterFilled: Painter,
   tintEmpty: Color? = null,
   tintFilled: Color? = null,
   itemSize: Dp = Dp.Unspecified,
-  rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
-  gestureMode: GestureMode = GestureMode.DragAndTouch,
-  shimmer: Shimmer? = null,
+  rateChangeStrategy: RateChangeStrategy = RateChangeStrategy.AnimatedChange(),
+  gestureStrategy: GestureStrategy = GestureStrategy.DragAndPress,
+  shimmerEffect: ShimmerEffect? = null,
   itemCount: Int = 5,
   space: Dp = 0.dp,
   ratingInterval: RatingInterval = RatingInterval.Unconstrained,
   allowZeroRating: Boolean = true,
   onRatingChangeFinished: ((Float) -> Unit)? = null,
   onRatingChange: (Float) -> Unit
-) 
+)
 ```
 
 ```kotlin
@@ -87,19 +87,57 @@ fun RatingBar(
   rating: Float,
   imageVectorEmpty: ImageVector,
   imageVectorFilled: ImageVector,
-  tintEmpty: Color? = DefaultColor,
+  tintEmpty: Color? = null,
   tintFilled: Color? = null,
   itemSize: Dp = Dp.Unspecified,
-  rateChangeMode: RateChangeMode = RateChangeMode.AnimatedChange(),
-  gestureMode: GestureMode = GestureMode.DragAndTouch,
-  shimmer: Shimmer? = null,
+  rateChangeStrategy: RateChangeStrategy = RateChangeStrategy.AnimatedChange(),
+  gestureStrategy: GestureStrategy = GestureStrategy.DragAndPress,
+  shimmerEffect: ShimmerEffect? = null,
   itemCount: Int = 5,
   space: Dp = 0.dp,
   ratingInterval: RatingInterval = RatingInterval.Unconstrained,
   allowZeroRating: Boolean = true,
   onRatingChangeFinished: ((Float) -> Unit)? = null,
   onRatingChange: (Float) -> Unit
-) 
+)
+```
+
+## Shimmer Effect
+There are two types of shimmer effect
+
+### FillShimmer
+```kotlin
+@Immutable
+data class FillShimmer(
+    val colors: List<Color> = DefaultFillGradientColors,
+    val animationSpec: InfiniteRepeatableSpec<Float> = infiniteRepeatable(
+        tween(
+            durationMillis = 3000,
+            easing = FastOutSlowInEasing
+        ),
+        RepeatMode.Reverse
+    ),
+    val solidBorder: Boolean = false
+)
+```
+
+is for solid foreground effect. `solidBorder` draws empty image over shimmer with
+`tintEmpty`.
+
+Second shimmer type is for drawing gradient border with
+
+```kotlin
+@Immutable
+data class BorderShimmer(
+    val colors: List<Color>,
+    val animationSpec: InfiniteRepeatableSpec<Float> = infiniteRepeatable(
+        tween(
+            durationMillis = 3000,
+            easing = FastOutSlowInEasing
+        ),
+        RepeatMode.Restart
+    )
+)
 ```
 
 ## Usage
