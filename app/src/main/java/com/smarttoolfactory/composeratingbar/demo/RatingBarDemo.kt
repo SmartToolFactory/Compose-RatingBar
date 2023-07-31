@@ -443,8 +443,11 @@ fun ShimmerSample() {
                 colors = listOf(
                     Color.Red,
                     Color.Green,
-                    Color.Blue
-                )
+                    Color.Green,
+                    Color.Blue,
+                    Color.Blue,
+                    Color.Red
+                ),
             )
         ),
         itemSize = 60.dp

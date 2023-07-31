@@ -7,6 +7,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -14,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -53,28 +55,69 @@ internal fun RatingBarImpl(
     onRatingChange: (Float) -> Unit
 ) {
 
-    Box(modifier) {
+    BoxWithConstraints(
+        modifier,
+        contentAlignment = Alignment.Center
+    ) {
 
-        val height: Dp = if (itemSize != Dp.Unspecified) {
-            itemSize
+        val density = LocalDensity.current
+
+        val boxMaxWidth = constraints.maxWidth
+        val boxMaxHeight = constraints.maxHeight
+
+        // When we have non-scrollable modifier
+        // limit item width at most total width/item count
+        val itemWidthPx = if (constraints.hasBoundedWidth) {
+            (if (itemSize != Dp.Unspecified) {
+                density.run { itemSize.toPx() }
+            } else {
+                intrinsicWidth
+            }).coerceIn(0f, (boxMaxWidth / itemCount).toFloat())
         } else {
-            LocalDensity.current.run { intrinsicHeight.toDp() }
+            if (itemSize != Dp.Unspecified) {
+                density.run { itemSize.toPx() }
+            } else {
+                intrinsicWidth
+            }
         }
 
-        val spacePx: Float = LocalDensity.current.run { space.toPx() }
-
-        val itemWidthPx: Float = if (itemSize != Dp.Unspecified) {
-            LocalDensity.current.run { itemSize.toPx() }
+        // Assume max item height as max item width after it's constrained
+        // by maximum width of Container
+        val itemHeightPx = (if (constraints.hasBoundedHeight) {
+            if (itemSize != Dp.Unspecified) {
+                density.run { itemSize.toPx() }
+            } else {
+                intrinsicHeight
+            }.coerceAtMost(boxMaxHeight.toFloat())
         } else {
-            intrinsicWidth
+            if (itemSize != Dp.Unspecified) {
+                density.run { itemSize.toPx() }
+            } else {
+                intrinsicHeight
+            }
+        }).coerceIn(0f, itemWidthPx)
+
+        // Space can be between 0f and space left after placing rating items
+        // If items occupy space more than available for rating items no space is assigned
+        val adjustedSpacePx = density
+            .run { space.toPx() }
+            .coerceIn(
+                minimumValue = 0f,
+                maximumValue = (constraints.maxWidth - itemWidthPx * itemCount)
+                    .coerceAtLeast(0f)
+            )
+
+
+        val totalWidth: Dp = density.run {
+            itemWidthPx.toDp() * itemCount + adjustedSpacePx.toDp() * (itemCount - 1)
         }
 
-        val totalWidth: Dp = LocalDensity.current.run {
-            itemWidthPx.toDp() * itemCount + space * (itemCount - 1)
+        val totalHeight = density.run {
+            itemHeightPx.toDp()
         }
 
         val itemIntervals = remember {
-            ratingItemPositions(itemWidthPx, spacePx, itemCount)
+            ratingItemPositions(itemWidthPx, adjustedSpacePx, itemCount)
         }
 
         val coerced = rating.coerceIn(0f, itemCount.toFloat())
@@ -110,7 +153,7 @@ internal fun RatingBarImpl(
                                     x = x,
                                     itemIntervals = itemIntervals,
                                     ratingBarDimension = ratingBarWidth,
-                                    space = spacePx,
+                                    space = adjustedSpacePx,
                                     totalCount = itemCount,
                                     ratingInterval = ratingInterval,
                                     allowZeroRating = allowZeroRating
@@ -143,7 +186,7 @@ internal fun RatingBarImpl(
                                 x = x,
                                 itemIntervals = itemIntervals,
                                 ratingBarDimension = ratingBarWidth,
-                                space = spacePx,
+                                space = adjustedSpacePx,
                                 totalCount = itemCount,
                                 ratingInterval = ratingInterval,
                                 allowZeroRating = allowZeroRating
@@ -169,41 +212,47 @@ internal fun RatingBarImpl(
                 }
             )
 
-        val shimmerData: ShimmerData? = shimmerEffect?.let {
-
-            val fillShimmer = shimmerEffect.fillShimmer
-            val borderShimmer = shimmerEffect.borderShimmer
-
-            val fillProgress = fillShimmer?.animationSpec?.let {
-                getRatingShimmerProgress(fillShimmer.animationSpec)
-            }
-
-            val borderProgress = borderShimmer?.animationSpec?.let {
-                getRatingShimmerProgress(borderShimmer.animationSpec)
-            }
-
-            ShimmerData(
-                fillProgress = fillProgress,
-                fillColors = fillShimmer?.colors,
-                solidBorderOverFill = fillShimmer?.solidBorder ?: false,
-                borderProgress = borderProgress,
-                borderColors = borderShimmer?.colors
-            )
-        }
+        val shimmerData: ShimmerData? = getShimmerData(shimmerEffect)
 
         Box(
             modifier = gestureModifier
                 .width(totalWidth)
-                .height(height)
+                .height(totalHeight)
                 .drawBehind {
                     block(
                         animatableRating.value,
-                        spacePx,
+                        adjustedSpacePx,
                         shimmerData
                     )
                 }
         )
     }
+}
+
+@Composable
+private fun getShimmerData(shimmerEffect: ShimmerEffect?): ShimmerData? {
+    val shimmerData: ShimmerData? = shimmerEffect?.let {
+
+        val fillShimmer = shimmerEffect.fillShimmer
+        val borderShimmer = shimmerEffect.borderShimmer
+
+        val fillProgress = fillShimmer?.animationSpec?.let {
+            getRatingShimmerProgress(fillShimmer.animationSpec)
+        }
+
+        val borderProgress = borderShimmer?.animationSpec?.let {
+            getRatingShimmerProgress(borderShimmer.animationSpec)
+        }
+
+        ShimmerData(
+            fillProgress = fillProgress,
+            fillColors = fillShimmer?.colors,
+            solidBorderOverFill = fillShimmer?.solidBorder ?: false,
+            borderProgress = borderProgress,
+            borderColors = borderShimmer?.colors
+        )
+    }
+    return shimmerData
 }
 
 @Composable
@@ -263,4 +312,17 @@ private fun ratingItemPositions(
     }
 
     return list
+}
+
+@Composable
+private fun RatingLayout(
+    modifier: Modifier,
+    itemSize: Dp = Dp.Unspecified,
+    intrinsicWidth: Float,
+    intrinsicHeight: Float,
+    itemCount: Int = 5,
+    space: Dp = 0.dp,
+    content: @Composable () -> Unit
+) {
+
 }

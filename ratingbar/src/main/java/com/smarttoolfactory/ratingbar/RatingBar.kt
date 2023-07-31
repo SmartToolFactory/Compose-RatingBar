@@ -1,5 +1,6 @@
 package com.smarttoolfactory.ratingbar
 
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -99,6 +100,9 @@ fun RatingBar(
         }
     }
 
+    val state = rememberLazyGridState()
+
+    state.layoutInfo.visibleItemsInfo
     RatingBarImpl(
         modifier = modifier,
         rating = ratingFraction,

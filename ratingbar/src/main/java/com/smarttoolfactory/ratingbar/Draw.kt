@@ -25,15 +25,20 @@ internal fun DrawScope.drawRatingPainters(
     space: Float
 ) {
 
+    if (itemCount == 0) {
+        return
+    }
+
+    // Width of rating bar with items and spaces combined
+    val ratingBarWidth = size.width
+
     // Width of single rating item
-    val itemWidth = size.height
+    val itemWidth = (size.width - space * (itemCount - 1)) / (itemCount)
     // Height of single rating item
-    val itemHeight = size.height
+    val itemHeight = size.height.coerceAtMost(itemWidth)
 
     val ratingInt = rating.toInt()
 
-    // Width of rating bar with items and spaces combined
-    val ratingBarWidth = itemWidth * itemCount + space * (itemCount - 1)
     // Height of the ratingbar
     val ratingBarHeight = size.height
     // Start of empty rating items
@@ -163,15 +168,20 @@ internal fun DrawScope.drawRatingImages(
     space: Float,
 ) {
 
+    if (itemCount == 0) {
+        return
+    }
+
+    // Width of rating bar with items and spaces combined
+    val ratingBarWidth = size.width
+
     // Width of single rating item
-    val itemWidth = size.height
+    val itemWidth = (size.width - space * (itemCount - 1)) / (itemCount)
     // Height of single rating item
-    val itemHeight = size.height
+    val itemHeight = size.height.coerceAtMost(itemWidth)
 
     val ratingInt = rating.toInt()
 
-    // Width of rating bar with items and spaces combined
-    val ratingBarWidth = itemWidth * itemCount + space * (itemCount - 1)
     // Height of the ratingbar
     val ratingBarHeight = size.height
     // Start of empty rating items
