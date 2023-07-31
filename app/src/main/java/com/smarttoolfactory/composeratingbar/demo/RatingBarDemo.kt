@@ -72,6 +72,265 @@ fun RatingbarDemo() {
 }
 
 @Composable
+private fun RatingIntervalsSample() {
+
+    var rating by remember { mutableStateOf(3.7f) }
+
+    val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
+    val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
+
+
+    Text(
+        modifier = Modifier.padding(vertical = 8.dp),
+        text = "Rating Intervals",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.secondary
+    )
+    Text(text = "Full")
+    RatingBar(
+        rating = rating,
+        space = 2.dp,
+        imageEmpty = imageBackground,
+        imageFilled = imageForeground,
+        rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
+        ratingInterval = RatingInterval.Full,
+        itemSize = 40.dp
+    ) {
+        rating = it
+    }
+    Text(text = "Half")
+    RatingBar(
+        rating = rating,
+        space = 2.dp,
+        imageEmpty = imageBackground,
+        imageFilled = imageForeground,
+        ratingInterval = RatingInterval.Half,
+        itemSize = 40.dp
+    ) {
+        rating = it
+    }
+    Text(text = "Unconstrained")
+    RatingBar(
+        rating = rating,
+        space = 2.dp,
+        imageEmpty = imageBackground,
+        imageFilled = imageForeground,
+        ratingInterval = RatingInterval.Unconstrained,
+        itemSize = 40.dp
+    ) {
+        rating = it
+    }
+
+    Text(
+        "Rating: $rating",
+        fontSize = 16.sp,
+        color = MaterialTheme.colorScheme.primary
+    )
+
+    Slider(value = rating, onValueChange = { rating = it }, valueRange = 0f..5f)
+
+}
+
+@Composable
+private fun RateChangeSample() {
+
+    var rating2 by remember { mutableStateOf(3.7f) }
+
+    val painterBackground = painterResource(id = R.drawable.star_background)
+    val painterForeground = painterResource(id = R.drawable.star_foreground)
+
+
+    Text(
+        modifier = Modifier.padding(vertical = 8.dp),
+        text = "Rate Change Modes",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.secondary
+    )
+
+    Text(text = "InstantChange")
+
+    RatingBar(
+        rating = rating2,
+        space = 2.dp,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        tintFilled = rateColor,
+        rateChangeStrategy = RateChangeStrategy.InstantChange,
+        itemSize = 40.dp
+    ) {
+        rating2 = it
+    }
+
+    Text(text = "LinearEasing")
+    RatingBar(
+        rating = rating2,
+        space = 2.dp,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        tintFilled = rateColor,
+        rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
+        itemSize = 40.dp
+    ) {
+        rating2 = it
+    }
+
+    Text(text = "spring")
+    RatingBar(
+        rating = rating2,
+        space = 2.dp,
+        painterEmpty = painterBackground,
+        painterFilled = painterForeground,
+        tintFilled = rateColor,
+
+        rateChangeStrategy = RateChangeStrategy.AnimatedChange(
+            animationSpec = spring(
+                dampingRatio = 0.3f,
+                stiffness = 300f
+            )
+        ),
+        itemSize = 40.dp
+    ) {
+        rating2 = it
+    }
+
+
+    Slider(
+        value = rating2,
+        onValueChange = { rating2 = it },
+        valueRange = 0f..5f
+    )
+
+    Text(
+        "Rating: $rating2",
+        fontSize = 16.sp,
+        color = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
+private fun GestureStrategySample() {
+
+    var rating3 by remember { mutableStateOf(2.3f) }
+
+
+    Text(
+        modifier = Modifier.padding(vertical = 8.dp),
+        text = "Gesture Modes",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.secondary
+    )
+
+    Text(text = "DragAndTouch")
+    RatingBar(
+        rating = rating3,
+        painterEmpty = painterResource(id = R.drawable.star_background),
+        painterFilled = painterResource(id = R.drawable.star_foreground),
+        gestureStrategy = GestureStrategy.DragAndPress,
+        tintEmpty = Color(0xff795548),
+        tintFilled = Color(0xff795548),
+        itemSize = 40.dp
+    ) {
+        rating3 = it
+    }
+
+
+
+    Text(text = "Touch")
+    RatingBar(
+        rating = rating3,
+        painterEmpty = painterResource(id = R.drawable.star_background),
+        painterFilled = painterResource(id = R.drawable.star_foreground),
+        gestureStrategy = GestureStrategy.Press,
+        tintEmpty = Color(0xff795548),
+        tintFilled = Color(0xff795548),
+        itemSize = 40.dp
+    ) {
+        rating3 = it
+    }
+
+    Text(text = "None")
+    RatingBar(
+        rating = rating3,
+        painterEmpty = painterResource(id = R.drawable.star_background),
+        painterFilled = painterResource(id = R.drawable.star_foreground),
+        gestureStrategy = GestureStrategy.None,
+        tintEmpty = Color(0xff795548),
+        tintFilled = Color(0xff795548),
+        itemSize = 40.dp
+    ) {
+        rating3 = it
+    }
+}
+
+@Composable
+private fun ColorAndShapeSample() {
+    var rating4 by remember { mutableStateOf(4.5f) }
+    var rating5 by remember { mutableStateOf(1.7f) }
+    val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
+    val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
+
+
+    Text(
+        modifier = Modifier.padding(vertical = 8.dp),
+        text = "Color and Shape",
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.secondary
+    )
+
+    Text(text = "ImageBitmap")
+
+    RatingBar(
+        rating = 3.2f,
+        itemCount = 5,
+        imageEmpty = imageBackground,
+        imageFilled = imageForeground,
+        tintFilled = DefaultColor
+    ) {
+
+    }
+
+    Text(text = "ImageVector")
+
+    RatingBar(
+        rating = rating4,
+        space = 2.dp,
+        imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.outline_wb_cloudy_24),
+        imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_wb_cloudy_24),
+        tintEmpty = Color(0xff2196F3),
+        tintFilled = Color(0xff4FC3F7),
+        itemSize = 60.dp
+    ) {
+        rating4 = it
+    }
+
+    RatingBar(
+        rating = rating5,
+        imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.twotone_person_24),
+        imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_person_24),
+        tintEmpty = Color(0xff795548),
+        tintFilled = Color(0xffA1887F),
+        itemSize = 40.dp
+    ) {
+        rating5 = it
+    }
+
+    RatingBar(
+        rating = rating5,
+        imageVectorEmpty = Icons.Outlined.Notifications,
+        imageVectorFilled = Icons.Filled.Notifications,
+        tintEmpty = Color(0xff795DD48),
+        tintFilled = DefaultColor,
+        itemSize = 40.dp
+    ) {
+        rating5 = it
+    }
+}
+
+@Composable
 fun ShimmerSample() {
     var rating6 by remember { mutableStateOf(5f) }
     val painterBackground = painterResource(id = R.drawable.star_background)
@@ -222,7 +481,7 @@ fun ShimmerSample() {
         itemCount = 10,
         painterEmpty = painterBackground,
         painterFilled = painterForeground,
-        tintEmpty = Color.Cyan,
+        tintEmpty = rateColor,
         shimmerEffect = ShimmerEffect(
             fillShimmer = FillShimmer(
                 colors = listOf(
@@ -242,14 +501,14 @@ fun ShimmerSample() {
         itemCount = 10,
         painterEmpty = painterBackground,
         painterFilled = painterForeground,
-        tintEmpty = Color.Cyan,
+        tintEmpty = rateColor,
         shimmerEffect = ShimmerEffect(
             fillShimmer = FillShimmer(
                 colors = listOf(
-                    Color.Red,
+                    Color.Cyan,
                     Color.Green,
                     Color.Blue,
-                    Color.Red,
+                    Color.Cyan,
                 ),
                 animationSpec = infiniteRepeatable(
                     animation = tween(durationMillis = 3000, easing = LinearEasing),
@@ -259,259 +518,4 @@ fun ShimmerSample() {
             )
         )
     ) {}
-}
-
-@Composable
-private fun RatingIntervalsSample() {
-
-    var rating by remember { mutableStateOf(3.7f) }
-
-    val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
-    val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
-
-
-    Text(
-        modifier = Modifier.padding(vertical = 8.dp),
-        text = "Rating Intervals",
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.secondary
-    )
-    Text(text = "Full")
-    RatingBar(
-        rating = rating,
-        space = 2.dp,
-        imageEmpty = imageBackground,
-        imageFilled = imageForeground,
-        rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
-        ratingInterval = RatingInterval.Full,
-        itemSize = 40.dp
-    ) {
-        rating = it
-    }
-    Text(text = "Half")
-    RatingBar(
-        rating = rating,
-        space = 2.dp,
-        imageEmpty = imageBackground,
-        imageFilled = imageForeground,
-        ratingInterval = RatingInterval.Half,
-        itemSize = 40.dp
-    ) {
-        rating = it
-    }
-    Text(text = "Unconstrained")
-    RatingBar(
-        rating = rating,
-        space = 2.dp,
-        imageEmpty = imageBackground,
-        imageFilled = imageForeground,
-        ratingInterval = RatingInterval.Unconstrained,
-        itemSize = 40.dp
-    ) {
-        rating = it
-    }
-
-    Text(
-        "Rating: $rating",
-        fontSize = 16.sp,
-        color = MaterialTheme.colorScheme.primary
-    )
-
-    Slider(value = rating, onValueChange = { rating = it }, valueRange = 0f..5f)
-
-}
-
-@Composable
-private fun RateChangeSample() {
-
-    var rating2 by remember { mutableStateOf(3.7f) }
-
-    val painterBackground = painterResource(id = R.drawable.star_background)
-    val painterForeground = painterResource(id = R.drawable.star_foreground)
-
-
-    Text(
-        modifier = Modifier.padding(vertical = 8.dp),
-        text = "Rate Change Modes",
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.secondary
-    )
-
-    Text(text = "InstantChange")
-
-    RatingBar(
-        rating = rating2,
-        space = 2.dp,
-        painterEmpty = painterBackground,
-        painterFilled = painterForeground,
-        rateChangeStrategy = RateChangeStrategy.InstantChange,
-        itemSize = 40.dp
-    ) {
-        rating2 = it
-    }
-
-    Text(text = "LinearEasing")
-    RatingBar(
-        rating = rating2,
-        space = 2.dp,
-        painterEmpty = painterBackground,
-        painterFilled = painterForeground,
-        rateChangeStrategy = RateChangeStrategy.AnimatedChange(),
-        itemSize = 40.dp
-    ) {
-        rating2 = it
-    }
-
-    Text(text = "spring")
-    RatingBar(
-        rating = rating2,
-        space = 2.dp,
-        painterEmpty = painterBackground,
-        painterFilled = painterForeground,
-        rateChangeStrategy = RateChangeStrategy.AnimatedChange(
-            animationSpec = spring(
-                dampingRatio = 0.3f,
-                stiffness = 300f
-            )
-        ),
-        itemSize = 40.dp
-    ) {
-        rating2 = it
-    }
-
-
-    Slider(
-        value = rating2,
-        onValueChange = { rating2 = it },
-        valueRange = 0f..5f
-    )
-
-    Text(
-        "Rating: $rating2",
-        fontSize = 16.sp,
-        color = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
-private fun GestureStrategySample() {
-
-    var rating3 by remember { mutableStateOf(2.3f) }
-
-
-    Text(
-        modifier = Modifier.padding(vertical = 8.dp),
-        text = "Gesture Modes",
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.secondary
-    )
-
-    Text(text = "DragAndTouch")
-    RatingBar(
-        rating = rating3,
-        painterEmpty = painterResource(id = R.drawable.star_background),
-        painterFilled = painterResource(id = R.drawable.star_foreground),
-        gestureStrategy = GestureStrategy.DragAndPress,
-        tintEmpty = Color(0xff795548),
-        tintFilled = Color(0xff795548),
-        itemSize = 40.dp
-    ) {
-        rating3 = it
-    }
-
-
-
-    Text(text = "Touch")
-    RatingBar(
-        rating = rating3,
-        painterEmpty = painterResource(id = R.drawable.star_background),
-        painterFilled = painterResource(id = R.drawable.star_foreground),
-        gestureStrategy = GestureStrategy.Press,
-        tintEmpty = Color(0xff795548),
-        tintFilled = Color(0xff795548),
-        itemSize = 40.dp
-    ) {
-        rating3 = it
-    }
-
-    Text(text = "None")
-    RatingBar(
-        rating = rating3,
-        painterEmpty = painterResource(id = R.drawable.star_background),
-        painterFilled = painterResource(id = R.drawable.star_foreground),
-        gestureStrategy = GestureStrategy.None,
-        tintEmpty = Color(0xff795548),
-        tintFilled = Color(0xff795548),
-        itemSize = 40.dp
-    ) {
-        rating3 = it
-    }
-}
-
-@Composable
-private fun ColorAndShapeSample() {
-    var rating4 by remember { mutableStateOf(4.5f) }
-    var rating5 by remember { mutableStateOf(1.7f) }
-    val imageBackground = ImageBitmap.imageResource(id = R.drawable.star_background)
-    val imageForeground = ImageBitmap.imageResource(id = R.drawable.star_foreground)
-
-
-    Text(
-        modifier = Modifier.padding(vertical = 8.dp),
-        text = "Color and Shape",
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.secondary
-    )
-
-    Text(text = "ImageBitmap")
-
-    RatingBar(
-        rating = 3.2f,
-        itemCount = 5,
-        imageEmpty = imageBackground,
-        imageFilled = imageForeground,
-        tintFilled = DefaultColor
-    ) {
-
-    }
-
-    Text(text = "ImageVector")
-
-    RatingBar(
-        rating = rating4,
-        space = 2.dp,
-        imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.outline_wb_cloudy_24),
-        imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_wb_cloudy_24),
-        tintEmpty = Color(0xff2196F3),
-        tintFilled = Color(0xff4FC3F7),
-        itemSize = 60.dp
-    ) {
-        rating4 = it
-    }
-
-    RatingBar(
-        rating = rating5,
-        imageVectorEmpty = ImageVector.vectorResource(id = R.drawable.twotone_person_24),
-        imageVectorFilled = ImageVector.vectorResource(id = R.drawable.baseline_person_24),
-        tintEmpty = Color(0xff795548),
-        tintFilled = Color(0xffA1887F),
-        itemSize = 40.dp
-    ) {
-        rating5 = it
-    }
-
-    RatingBar(
-        rating = rating5,
-        imageVectorEmpty = Icons.Outlined.Notifications,
-        imageVectorFilled = Icons.Filled.Notifications,
-        tintEmpty = Color(0xff795DD48),
-        tintFilled = DefaultColor,
-        itemSize = 40.dp
-    ) {
-        rating5 = it
-    }
 }
