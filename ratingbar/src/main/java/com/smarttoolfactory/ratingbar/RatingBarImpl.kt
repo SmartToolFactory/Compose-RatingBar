@@ -313,16 +313,3 @@ private fun ratingItemPositions(
 
     return list
 }
-
-@Composable
-private fun RatingLayout(
-    modifier: Modifier,
-    itemSize: Dp = Dp.Unspecified,
-    intrinsicWidth: Float,
-    intrinsicHeight: Float,
-    itemCount: Int = 5,
-    space: Dp = 0.dp,
-    content: @Composable () -> Unit
-) {
-
-}
