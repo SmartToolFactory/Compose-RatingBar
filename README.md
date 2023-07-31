@@ -7,7 +7,9 @@ Rating bar to set fixed value or change rating by gestures with custom png files
 customization and shimmer effects.
 
 
-https://github.com/SmartToolFactory/Compose-RatingBar/assets/35650605/b1ee62e3-97a9-4883-90c1-c1319d42361a
+
+https://github.com/SmartToolFactory/Compose-RatingBar/assets/35650605/0612b122-07b7-401d-9598-0492c33c7b29
+
 
 
 ## Gradle Setup
