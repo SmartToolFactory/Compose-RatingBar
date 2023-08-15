@@ -1,5 +1,7 @@
 package com.smarttoolfactory.composeratingbar.demo
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -7,10 +9,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -41,6 +45,275 @@ private val gradientColors = listOf(
     Color.Blue,
     Color.Green
 )
+
+@Preview
+@Composable
+private fun SingleGradientTest() {
+
+    Column(
+        Modifier.padding(20.dp)
+    ) {
+        val painterStar = painterResource(id = R.drawable.star_foreground)
+
+        val limit = 1.5f
+        var progress by remember {
+            mutableStateOf(-limit)
+        }
+
+        val transition = rememberInfiniteTransition(label = "shimmer")
+        val progressAnimated by transition.animateFloat(
+            initialValue = -limit,
+            targetValue = limit,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1500, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ), label = "shimmer"
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .drawWithCache {
+                    val width = size.width
+                    val height = size.height
+
+                    val offset = width * progress
+                    val gradientWidth = width
+
+                    val brush = Brush.linearGradient(
+                        colors = gradientColors,
+                        start = Offset(offset, 0f),
+                        end = Offset(offset + gradientWidth, height)
+                    )
+
+                    onDrawBehind {
+                        drawRect(
+                            brush = brush,
+                            blendMode = BlendMode.SrcIn
+                        )
+                    }
+                }
+        )
+
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .graphicsLayer {
+                    compositingStrategy = CompositingStrategy.Offscreen
+                }
+                .drawWithCache {
+                    val width = size.width
+                    val height = size.height
+
+                    val offset = width * progress
+                    val gradientWidth = width
+
+
+                    val brush = Brush.linearGradient(
+                        colors = gradientColors,
+                        start = Offset(offset, 0f),
+                        end = Offset(offset + gradientWidth, height)
+
+                    )
+
+                    onDrawBehind {
+                        // Destination
+                        with(painterStar) {
+                            draw(
+                                size = Size(width, width)
+                            )
+                        }
+
+                        // Source
+                        drawRect(
+                            brush = brush,
+                            blendMode = BlendMode.SrcIn
+                        )
+                    }
+                }
+        )
+
+        Text("Progress: $progress")
+        Slider(
+            value = progress,
+            onValueChange = { progress = it },
+            valueRange = -limit..limit
+        )
+
+        Text(text = "Animated progress: $progressAnimated")
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .graphicsLayer {
+                    compositingStrategy = CompositingStrategy.Offscreen
+                }
+                .drawWithCache {
+                    val width = size.width
+                    val height = size.height
+
+                    val offset = width * progressAnimated
+                    val gradientWidth = width
+
+                    val brush = Brush.linearGradient(
+                        colors = gradientColors,
+                        start = Offset(offset, 0f),
+                        end = Offset(offset + gradientWidth, height)
+
+                    )
+
+                    onDrawBehind {
+                        // Destination
+                        with(painterStar) {
+                            draw(
+                                size = Size(width, width)
+                            )
+                        }
+
+                        // Source
+                        drawRect(
+                            brush = brush,
+                            blendMode = BlendMode.SrcIn
+                        )
+                    }
+                }
+        )
+    }
+}
+
+
+@Preview
+@Composable
+private fun SingleGradientTest2() {
+
+    Column(
+        Modifier.padding(20.dp)
+    ) {
+        val painterStar = painterResource(id = R.drawable.star_foreground)
+
+        val limit = 1.25f
+        var progress by remember {
+            mutableStateOf(0f)
+        }
+
+        val transition = rememberInfiniteTransition(label = "shimmer")
+        val progressAnimated by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = limit,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1500, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ), label = "shimmer"
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .drawWithCache {
+                    val width = size.width
+                    val height = size.height
+
+                    val gradientWidth = width / 4
+                    val offset = width * progress
+
+
+                    val brush = Brush.linearGradient(
+                        colors = gradientColors,
+                        start = Offset(offset - gradientWidth, offset - gradientWidth),
+                        end = Offset(offset, offset)
+                    )
+
+                    onDrawBehind {
+                        drawRect(
+                            brush = brush,
+                            blendMode = BlendMode.SrcIn
+                        )
+                    }
+                }
+        )
+
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .graphicsLayer {
+                    compositingStrategy = CompositingStrategy.Offscreen
+                }
+                .drawWithCache {
+                    val width = size.width
+
+                    val offset = width * progress
+                    val gradientWidth = width / 4
+
+                    val brush = Brush.linearGradient(
+                        colors = gradientColors,
+                        start = Offset(offset - gradientWidth, offset - gradientWidth),
+                        end = Offset(offset, offset)
+
+                    )
+
+                    onDrawBehind {
+                        // Destination
+                        with(painterStar) {
+                            draw(
+                                size = Size(width, width)
+                            )
+                        }
+
+                        // Source
+                        drawRect(
+                            brush = brush,
+                            blendMode = BlendMode.SrcIn
+                        )
+                    }
+                }
+        )
+
+        Text("Progress: $progress")
+        Slider(
+            value = progress,
+            onValueChange = { progress = it },
+            valueRange = 0f..limit
+        )
+
+        Text(text = "Animated progress: $progressAnimated")
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .graphicsLayer {
+                    compositingStrategy = CompositingStrategy.Offscreen
+                }
+                .drawWithCache {
+                    val width = size.width
+
+                    val offset = width * progressAnimated
+                    val gradientWidth = width / 2
+
+                    val brush = Brush.linearGradient(
+                        colors = gradientColors,
+                        start = Offset(offset - gradientWidth, offset - gradientWidth),
+                        end = Offset(offset, offset)
+
+                    )
+
+                    onDrawBehind {
+                        // Destination
+                        with(painterStar) {
+                            draw(
+                                size = Size(width, width)
+                            )
+                        }
+
+                        // Source
+                        drawRect(
+                            brush = brush,
+                            blendMode = BlendMode.SrcIn
+                        )
+                    }
+                }
+        )
+    }
+}
 
 @Preview
 @Composable
@@ -156,7 +429,7 @@ private fun GradientWithSliderTest() {
         Box(
             modifier = Modifier
                 .width(width = widthDp)
-                .height(widthDp / 5)
+                .height(widthDp)
                 .drawWithCache {
                     val widthPx = size.width
 
@@ -200,7 +473,7 @@ private fun GradientWithSliderTest() {
                     val brush = Brush.linearGradient(
                         colors = gradientColors,
                         start = Offset(
-                            widthPx * progress- itemWidth,
+                            widthPx * progress - itemWidth,
                             widthPx * progress - itemWidth,
                         ),
                         end = Offset(
